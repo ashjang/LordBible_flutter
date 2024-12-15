@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:lord_bible/src/pages/home.dart';
 import './controller/bottom_nav_controller.dart';
 
 class App extends GetView<BottomNavController> {
@@ -13,7 +14,7 @@ class App extends GetView<BottomNavController> {
       body: IndexedStack(
         index: controller.pageIndex.value,
         children: [
-          Container(child: Center(child: Text("Home")),),
+          const Home(),
           Container(child: Center(child: Text("Bible")),),
           Container(child: Center(child: Text("Search")),),
           Container(child: Center(child: Text("Setting")),),
