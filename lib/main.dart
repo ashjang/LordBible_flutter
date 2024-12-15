@@ -8,7 +8,7 @@ import 'package:lord_bible/src/binding/init_binding.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
+
   );
   runApp(const MyApp());
 }
