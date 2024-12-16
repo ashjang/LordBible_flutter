@@ -5,6 +5,7 @@ import 'package:lord_bible/src/data/getChapterWord.dart';
 import 'package:lord_bible/src/pages/bible_select.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Bible extends StatefulWidget {
   const Bible({super.key});
@@ -16,6 +17,7 @@ class Bible extends StatefulWidget {
 class _BibleState extends State<Bible> {
   final List<String> versions = ["KJV흠정역", "KJV", "개역개정", "NIV"];
   List<String> selectedVersions = [];
+  String? defaultVersion = "KJV흠정역";
   String? selectedBook = "Gen";
   String selectedChapter = "1";
   List<Map<String, String>> verses = [];
@@ -27,7 +29,25 @@ class _BibleState extends State<Bible> {
   void initState() {
     super.initState();
     selectedVersions.add(versions[0]);
+    _loadPreferences();
     fetchVerses();
+  }
+
+  Future<void> _loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      defaultVersion = prefs.getString('defaultVersion') ?? "KJV흠정역";
+      selectedBook = prefs.getString('selectedBook') ?? "Gen";
+      selectedChapter = prefs.getString('selectedChapter') ?? "1";
+    });
+    fetchVerses();
+  }
+
+  Future<void> _savePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('defaultVersion', defaultVersion!);
+    await prefs.setString('selectedBook', selectedBook!);
+    await prefs.setString('selectedChapter', selectedChapter!);
   }
 
   Future<void> fetchVerses() async {
@@ -114,13 +134,14 @@ class _BibleState extends State<Bible> {
               child: Text("Select", style: TextStyle(fontSize: 18.0),),
               onPressed: () => {
                 Navigator.push(context, CupertinoPageRoute(builder: (context) => BibleSelect()))
-                .then((result) {
+                .then((result) async {
                   if (result != null) {
                     setState(() {
                       selectedBook = result['selectedBook'];
                       selectedChapter = result['selectedChapter'];
                       selectedIndexes.clear();
                     });
+                    await _savePreferences();
                     fetchVerses().then((_) {
                       _scrollController.jumpTo(0);
                     });
