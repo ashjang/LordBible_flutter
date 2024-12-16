@@ -14,14 +14,17 @@ class Bible extends StatefulWidget {
   State<Bible> createState() => _BibleState();
 }
 
+final List<Color> additionalColors = [Colors.red, Colors.blue, Colors.green];
+
 class _BibleState extends State<Bible> {
   final List<String> versions = ["KJV흠정역", "KJV", "개역개정", "NIV"];
   List<String> selectedVersions = [];
   String? defaultVersion = "KJV흠정역";
   String? selectedBook = "Gen";
   String selectedChapter = "1";
-  List<Map<String, String>> verses = [];
+  List<Map<String, dynamic>> verses = [];
   Set<int> selectedIndexes = {};
+  bool isLoading = false;
   final GetChapterWord _getChapterWord = GetChapterWord();
   final ScrollController _scrollController = ScrollController();
 
@@ -53,13 +56,58 @@ class _BibleState extends State<Bible> {
   Future<void> fetchVerses() async {
     if (selectedBook == null || selectedChapter == null) return;
 
+    setState(() {
+      isLoading = true;
+    });
+
     try {
-      final fetchedVerses = await _getChapterWord.fetchData("KJV흠정역", toLong['${selectedBook}']!, selectedChapter);
+      // 기본 버전 데이터 부르기
+      final defaultFetchedVerses = await _getChapterWord.fetchData(defaultVersion!, toLong['${selectedBook}']!, selectedChapter);
+
+      // 선택된 추가 버전 데이터 가져옴
+      Map<String, List<Map<String, String>>> additionVersionVerses = {};
+      for (String version in selectedVersions) {
+        if (version == defaultVersion) continue; // 기본 버전은 이미 가져옴
+        final fetchedVerses = await _getChapterWord.fetchData(version, toLong['${selectedBook}']!, selectedChapter,);
+        additionVersionVerses[version] = fetchedVerses;
+      }
+
+      // 교차 데이터
+      List<Map<String, dynamic>> mergedVerses = [];
+      for (int i = 0; i < defaultFetchedVerses.length; i++) {
+        mergedVerses.add({
+          'version': defaultVersion,
+          'verse': defaultFetchedVerses[i]['verse'],
+          'word': defaultFetchedVerses[i]['word'],
+          'color': Colors.black,
+        });
+
+        // 추가 버전의 동일한 절 데이터 추가
+        int versionIndex = 0;
+        for (String version in selectedVersions) {
+          if (version == defaultVersion) continue;
+          final additionVerse = additionVersionVerses[version]?[i];
+          if (additionVerse != null) {
+            mergedVerses.add({
+              'version': version,
+              'verse': additionVerse['verse'],
+              'word': additionVerse['word'],
+              'color': additionalColors[versionIndex % additionalColors.length]
+            });
+            versionIndex++;
+          }
+        }
+      }
+
       setState(() {
-        verses = fetchedVerses;
+        verses = mergedVerses;
       });
     } catch (e) {
       Fluttertoast.showToast(msg: "Failed to load data: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -72,6 +120,8 @@ class _BibleState extends State<Bible> {
       } else {
         selectedVersions.add(version);
       }
+
+      fetchVerses();
     });
   }
 
@@ -261,9 +311,14 @@ class _BibleState extends State<Bible> {
   }
 
   Widget _verseList() {
+    if (isLoading) {
+      return Expanded(child: Center(child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey),));
+    }
+
     if (verses.isEmpty) {
       return Center(child: Text("No verses available"));
     }
+
     return Expanded(
       child: ListView.separated(
         controller: _scrollController,
@@ -283,7 +338,7 @@ class _BibleState extends State<Bible> {
               vertical: 0,    // 위아래 패딩 최소화 (필요에 따라 조정)
             ),
             tileColor: isSelected ? Colors.grey : null,
-            title: Text("${verse['verse']}  ${verse['word']}", style: TextStyle(height: 1.3,),),
+            title: Text("${verse['verse']}  ${verse['word']}", style: TextStyle(height: 1.3, color: verse['color'] ?? Colors.black),),
             onTap: () {
               setState(() {
                 if (isSelected) {
