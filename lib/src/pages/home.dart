@@ -48,9 +48,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text("Home", style: TextStyle(fontWeight: FontWeight.bold)),
+        appBar: CupertinoNavigationBar(
+            middle: Text("Home", style: TextStyle(fontWeight: FontWeight.bold)),
+            backgroundColor: Colors.transparent,
+            border: Border(bottom: BorderSide(color: Colors.transparent))
         ),
 
         body: Padding(

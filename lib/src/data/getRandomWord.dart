@@ -44,7 +44,7 @@ class GetRandomWordState extends State<GetRandomWord> {
   Widget build(BuildContext context) {
     return loading ? Padding(padding: const EdgeInsets.only(top: 50),
       child: Center(
-        child: CircularProgressIndicator(color: Colors.grey),)) : Column(
+        child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey),)) : Column(
           children: [
             Align(alignment: Alignment.topLeft,
             child: Text("${data!['address']} ${data!['chapter']}:${data!['verse']} (KJV흠정역)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),),
