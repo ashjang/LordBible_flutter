@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lord_bible/src/controller/bible_select_book.dart';
+import 'package:lord_bible/src/controller/bible_select_chapter.dart';
+import 'package:lord_bible/src/data/bible_data.dart';
 
 class BibleSelect extends StatefulWidget {
   const BibleSelect({super.key});
@@ -11,10 +13,9 @@ class BibleSelect extends StatefulWidget {
 
 class _BibleSelectState extends State<BibleSelect> {
   int _selectedSegment = 0;
-  String? address = "선택된 주소";
+  String? address = "Please choose book first";
   String? selectedBook;
-  int? chapter;
-  int? verse;
+  int? selectedChapter;
 
   Widget segmentView() {
     switch (_selectedSegment) {
@@ -24,13 +25,24 @@ class _BibleSelectState extends State<BibleSelect> {
           onBookedSelected: (book) {
             setState(() {
               selectedBook = book;
-              address = "$book";
+              selectedChapter = null;
+              address = "book: $book";
               _selectedSegment = 1;
             });
           },
         );
       case 1:
-        return Center(child: Text('Chapter'),);
+        return BibleSelectChapter(
+          selectedBook: selectedBook,
+          chapterCount: selectedBook != null ? bibleData[selectedBook]! : 0,
+          selectedChapter: selectedChapter,
+          onChapterSelected: (chapter) {
+            setState(() {
+              selectedChapter = chapter;
+              address = "book: $selectedBook\nchapter: $chapter";
+            });
+          },
+        );
       default:
         return Center(child: Text('Unknown'),);
     }
@@ -85,7 +97,7 @@ class _BibleSelectState extends State<BibleSelect> {
             ),
           ),
 
-          Text("${address}"),
+          Text("${address}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),),
           SizedBox(height: 10,),
           Expanded(child: segmentView())
         ],
