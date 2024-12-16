@@ -4,6 +4,7 @@ import 'package:lord_bible/src/data/bible_data.dart';
 import 'package:lord_bible/src/data/getChapterWord.dart';
 import 'package:lord_bible/src/pages/bible_select.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/services.dart';
 
 class Bible extends StatefulWidget {
   const Bible({super.key});
@@ -17,7 +18,8 @@ class _BibleState extends State<Bible> {
   List<String> selectedVersions = [];
   String? selectedBook = "Gen";
   String selectedChapter = "1";
-  List<Map<String, String>> verses = []; // 절 데이터 저장
+  List<Map<String, String>> verses = [];
+  Set<int> selectedIndexes = {};
   final GetChapterWord _getChapterWord = GetChapterWord();
 
   @override
@@ -60,6 +62,7 @@ class _BibleState extends State<Bible> {
         actions: [
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
+            _copySelectedItems();
             Fluttertoast.showToast(msg: "Copied");
           }, child: Text("Copy")),
           CupertinoActionSheetAction(onPressed: () {
@@ -76,6 +79,25 @@ class _BibleState extends State<Bible> {
           }, child: Text("Put in widget")),
         ],
       );
+    });
+  }
+
+  void _copySelectedItems() {
+    if (selectedIndexes.isEmpty) {
+      Fluttertoast.showToast(msg: "No items selected to copy.");
+      return;
+    }
+
+    // 선택된 항목의 텍스트 결합
+    String copiedText = selectedIndexes.map((index) {
+      final verse = verses[index];
+      return "${verse['verse']} ${verse['word']}";
+    }).join("\n");
+
+    // 클립보드에 복사
+    Clipboard.setData(ClipboardData(text: "${toLong[selectedBook]} ${selectedChapter}장\n${copiedText}"));
+    setState(() {
+      selectedIndexes.clear();
     });
   }
 
@@ -227,12 +249,26 @@ class _BibleState extends State<Bible> {
         ),
         itemBuilder: (context, index) {
           final verse = verses[index];
+          final isSelected = selectedIndexes.contains(index);
+
           return ListTile(
             contentPadding: EdgeInsets.symmetric(
               horizontal: 18, // 좌우 패딩 유지
               vertical: 0,    // 위아래 패딩 최소화 (필요에 따라 조정)
             ),
-            title: Text("${verse['verse']}  ${verse['word']}", style: TextStyle(height: 1.3),),
+            tileColor: isSelected ? Colors.grey : null,
+            title: Text("${verse['verse']}  ${verse['word']}", style: TextStyle(height: 1.3,),),
+            onTap: () {
+              setState(() {
+                if (isSelected) {
+                  selectedIndexes.remove(index);
+                  selectedIndexes.toList().sort();
+                } else {
+                  selectedIndexes.add(index); // 새로 선택
+                  selectedIndexes.toList().sort();
+                }
+              });
+            },
           );
         },
       ),
