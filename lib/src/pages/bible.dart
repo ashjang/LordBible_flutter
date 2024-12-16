@@ -21,6 +21,7 @@ class _BibleState extends State<Bible> {
   List<Map<String, String>> verses = [];
   Set<int> selectedIndexes = {};
   final GetChapterWord _getChapterWord = GetChapterWord();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -118,8 +119,11 @@ class _BibleState extends State<Bible> {
                     setState(() {
                       selectedBook = result['selectedBook'];
                       selectedChapter = result['selectedChapter'];
+                      selectedIndexes.clear();
                     });
-                    fetchVerses();
+                    fetchVerses().then((_) {
+                      _scrollController.jumpTo(0);
+                    });
                   }
                 })
               }),
@@ -137,8 +141,8 @@ class _BibleState extends State<Bible> {
           _addressBefAf(),
           // 순서
           _orderVersion(),
+          // SizedBox(height: 5,),
           // 리스트
-          const SizedBox(height: 20),
           _verseList(),
         ],
       )
@@ -231,7 +235,7 @@ class _BibleState extends State<Bible> {
         alignment: Alignment.centerRight,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
-          child: Text("order: ${selectedVersions}", style: TextStyle(color: Colors.grey[500], fontSize: fontSize, height: 0.01),),)
+          child: Text("order: ${selectedVersions}", style: TextStyle(color: Colors.grey[500], fontSize: fontSize,),),)
     );
   }
 
@@ -241,6 +245,7 @@ class _BibleState extends State<Bible> {
     }
     return Expanded(
       child: ListView.separated(
+        controller: _scrollController,
         itemCount: verses.length,
         separatorBuilder: (context, index) => Divider(
           color: Colors.grey,

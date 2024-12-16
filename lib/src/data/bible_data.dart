@@ -110,7 +110,7 @@ Map<String, String> toLong = {
   "Ps": "Psalms",
   "Prov": "Proverbs",
   "Ecc": "Ecclesiastes",
-  "Song": "Song of Solomon",
+  "Song": "SongofSongs",
   "Isa": "Isaiah",
   "Jer": "Jeremiah",
   "Lam": "Lamentations",
