@@ -320,56 +320,62 @@ class _BibleState extends State<Bible> {
     }
 
     return Expanded(
-      child: ListView.separated(
-        controller: _scrollController,
-        itemCount: verses.length,
-        separatorBuilder: (context, index) {
-          // 현재 구절과 다음 구절의 절 번호 비교
-          final currentVerse = verses[index]['verse'];
-          final nextVerse = index + 1 < verses.length ? verses[index + 1]['verse'] : null;
+      child: Scrollbar(
+          thumbVisibility: false,
+          thickness: 5.0,
+          radius: Radius.circular(10.0),
+          controller: _scrollController,
+          child: ListView.separated(
+            controller: _scrollController,
+            itemCount: verses.length,
+            separatorBuilder: (context, index) {
+              // 현재 구절과 다음 구절의 절 번호 비교
+              final currentVerse = verses[index]['verse'];
+              final nextVerse = index + 1 < verses.length ? verses[index + 1]['verse'] : null;
 
-          // 새로운 절의 시작 여부를 판단
-          if (nextVerse != null && currentVerse != nextVerse) {
-            // 새로운 절 시작: 두꺼운 구분선
-            return Divider(
-              color: Colors.grey[900],
-              thickness: 0.8,
-              height: 1.0,
-            );
-          } else {
-            // 같은 절 내의 구분: 얇은 구분선
-            return Divider(
-              color: Colors.grey,
-              thickness: 0.3,
-              height: 1.0,
-            );
-          }
-        },
-        itemBuilder: (context, index) {
-          final verse = verses[index];
-          final isSelected = selectedIndexes.contains(index);
-
-          return ListTile(
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 18, // 좌우 패딩 유지
-              vertical: 0,    // 위아래 패딩 최소화 (필요에 따라 조정)
-            ),
-            tileColor: isSelected ? Colors.grey : null,
-            title: Text("${verse['verse']}  ${verse['word']}", style: TextStyle(height: 1.3, color: verse['color'] ?? Colors.black),),
-            onTap: () {
-              setState(() {
-                if (isSelected) {
-                  selectedIndexes.remove(index);
-                  selectedIndexes.toList().sort();
-                } else {
-                  selectedIndexes.add(index); // 새로 선택
-                  selectedIndexes.toList().sort();
-                }
-              });
+              // 새로운 절의 시작 여부를 판단
+              if (nextVerse != null && currentVerse != nextVerse) {
+                // 새로운 절 시작: 두꺼운 구분선
+                return Divider(
+                  color: Colors.grey[900],
+                  thickness: 0.8,
+                  height: 1.0,
+                );
+              } else {
+                // 같은 절 내의 구분: 얇은 구분선
+                return Divider(
+                  color: Colors.grey,
+                  thickness: 0.3,
+                  height: 1.0,
+                );
+              }
             },
-          );
-        },
-      ),
+            itemBuilder: (context, index) {
+              final verse = verses[index];
+              final isSelected = selectedIndexes.contains(index);
+
+              return ListTile(
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 18, // 좌우 패딩 유지
+                  vertical: 0,    // 위아래 패딩 최소화 (필요에 따라 조정)
+                ),
+                tileColor: isSelected ? Colors.grey : null,
+                title: Text("${verse['verse']}  ${verse['word']}", style: TextStyle(height: 1.3, color: verse['color'] ?? Colors.black),),
+                onTap: () {
+                  setState(() {
+                    if (isSelected) {
+                      selectedIndexes.remove(index);
+                      selectedIndexes.toList().sort();
+                    } else {
+                      selectedIndexes.add(index); // 새로 선택
+                      selectedIndexes.toList().sort();
+                    }
+                  });
+                },
+              );
+            },
+          ),
+      )
     );
   }
 }
