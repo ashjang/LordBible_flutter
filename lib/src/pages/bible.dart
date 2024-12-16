@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lord_bible/src/pages/bible_select.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Bible extends StatefulWidget {
   const Bible({super.key});
@@ -10,6 +11,57 @@ class Bible extends StatefulWidget {
 }
 
 class _BibleState extends State<Bible> {
+  final List<String> versions = ["KJV흠정역", "KJV", "개역개정", "NIV"];
+  List<String> selectedVersions = [];
+  String? selectedBook;
+  int? selectedChapter;
+  List<Map<String, String>> verses = []; // 절 데이터 저장
+
+  @override
+  void initState() {
+    super.initState();
+    selectedVersions.add(versions[0]);
+  }
+
+  void toggleSelect(String version) {
+    setState(() {
+      if (version == versions[0]) return;
+
+      if (selectedVersions.contains(version)) {
+        selectedVersions.remove(version);
+      } else {
+        selectedVersions.add(version);
+      }
+    });
+  }
+
+  void _showMenu(BuildContext context) {
+    showCupertinoModalPopup(context: context, builder: (BuildContext context) {
+      return CupertinoActionSheet(
+        title: Text("Menu"),
+        message: Text("Choose an action"),
+        actions: [
+          CupertinoActionSheetAction(onPressed: () {
+            Navigator.pop(context);
+            Fluttertoast.showToast(msg: "Copied");
+          }, child: Text("Copy")),
+          CupertinoActionSheetAction(onPressed: () {
+            Navigator.pop(context);
+            Fluttertoast.showToast(msg: "Added to favorites");
+          }, child: Text("Highlight")),
+          CupertinoActionSheetAction(onPressed: () {
+            Navigator.pop(context);
+            Fluttertoast.showToast(msg: "Checked this chapter");
+          }, child: Text("Read Check")),
+          CupertinoActionSheetAction(onPressed: () {
+            Navigator.pop(context);
+            Fluttertoast.showToast(msg: "Added to widget");
+          }, child: Text("Put in widget")),
+        ],
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,26 +69,127 @@ class _BibleState extends State<Bible> {
             heroTag: 'bible_tag',
             transitionBetweenRoutes: false,
             middle: Text("Bible", style: TextStyle(fontWeight: FontWeight.bold)),
+            leading: CupertinoButton(padding: EdgeInsets.zero, child: Text("Menu", style: TextStyle(fontSize: 18.0),), onPressed: () => _showMenu(context)),
             trailing: CupertinoButton(padding: EdgeInsets.all(0.0),
-              child: Text("Select"),
+              child: Text("Select", style: TextStyle(fontSize: 18.0),),
               onPressed: () => {
                 Navigator.push(context, CupertinoPageRoute(builder: (context) => BibleSelect()))
+                .then((result) {
+                  if (result != null) {
+                    setState(() {
+                      selectedBook = result['selectedBook'] ?? "Genesis";
+                      selectedChapter = result['selectedChapter'] ?? 1;
+                    });
+                  }
+                })
               }),
             backgroundColor: Colors.transparent,
             border: Border(bottom: BorderSide(color: Colors.transparent))
         ),
 
-      body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.1),
-          child: Column(
-            children: [
-              // 버전 선택
-              // 주소 선택(이전,이후)
-              // 메뉴바, 순서
-              // 리스트
-            ],
-          )
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 버전 선택
+          _versionButton(),
+          // 주소 선택(이전,이후)
+          _addressBefAf(),
+          // 순서
+          _orderVersion(),
+          // 리스트
+          const SizedBox(height: 20),
+
+        ],
       )
+    );
+  }
+
+  // version button
+  Widget _versionButton() {
+    double fontSize = MediaQuery.of(context).size.width * 0.038;
+    return Scrollbar(
+      thumbVisibility: false,
+      thickness: 4,
+      radius: const Radius.circular(10),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.04, vertical: 6),
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: versions.map((version) {
+            bool isSelected = selectedVersions.contains(version);
+            bool isDefault = version == versions[0];
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: GestureDetector(
+                onTap: () => toggleSelect(version),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 6, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: isDefault
+                        ? Colors.grey[500]
+                        : isSelected
+                        ? Colors.grey[500]
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Text(
+                    version,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      color: isDefault
+                          ? Colors.black
+                          : isSelected
+                          ? Colors.white
+                          : Colors.grey[500],
+                      fontWeight: isDefault
+                          ? FontWeight.bold
+                          : isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  // 말씀구절 라벨 및 이전,다음 버튼
+  Widget _addressBefAf() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CupertinoButton(child: Icon(Icons.navigate_before, size: 30,),
+            onPressed: () {
+
+            }),
+        Text(selectedBook != null && selectedChapter != null
+            ? "$selectedBook  $selectedChapter"
+            : "", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),), //여기
+        CupertinoButton(child: Icon(Icons.navigate_next, size: 30),
+            onPressed: () {
+
+            }),
+      ],
+    );
+  }
+
+  Widget _orderVersion() {
+    double fontSize = MediaQuery.of(context).size.width * 0.033;
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
+        child: Text("order: ${selectedVersions}", style: TextStyle(color: Colors.grey[500], fontSize: fontSize),),)
     );
   }
 }

@@ -56,15 +56,17 @@ class _BibleSelectState extends State<BibleSelect> {
           transitionBetweenRoutes: false,
           middle: Text("Select Bible Verses", style: TextStyle(fontWeight: FontWeight.bold)),
           leading: CupertinoButton(padding: EdgeInsets.all(0.0),
-              child: Text("Cancel"),
+              child: Text("Cancel", style: TextStyle(fontSize: 18.0)),
               onPressed: () => {
                 Navigator.pop(context)
               }),
           trailing: CupertinoButton(padding: EdgeInsets.all(0.0),
-              child: Text("Done"),
+              child: Text("Done", style: TextStyle(fontSize: 18.0),),
               onPressed: () => {
-                // 선택한 성경구절 저장
-                Navigator.pop(context)
+                Navigator.pop(context, {
+                  'selectedBook': selectedBook,
+                  'selectedChapter': selectedChapter
+                })
               }),
           backgroundColor: Colors.transparent,
           border: Border(bottom: BorderSide(color: Colors.transparent))
