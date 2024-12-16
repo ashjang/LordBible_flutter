@@ -17,6 +17,28 @@ class _BibleSelectState extends State<BibleSelect> {
   String? selectedBook;
   String? selectedChapter;
 
+  void _showAlert(BuildContext context, String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text("Warning"),
+          content: Text(message),
+          actions: [
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   Widget segmentView() {
     switch (_selectedSegment) {
       case 0:
@@ -63,10 +85,14 @@ class _BibleSelectState extends State<BibleSelect> {
           trailing: CupertinoButton(padding: EdgeInsets.all(0.0),
               child: Text("Done", style: TextStyle(fontSize: 18.0),),
               onPressed: () => {
-                Navigator.pop(context, {
-                  'selectedBook': selectedBook,
-                  'selectedChapter': selectedChapter
-                })
+                if (selectedBook == null || selectedChapter == null) {
+                  _showAlert(context, "Please select both a book and a chapter")
+                } else {
+                  Navigator.pop(context, {
+                    'selectedBook': selectedBook,
+                    'selectedChapter': selectedChapter,
+                    })
+                }
               }),
           backgroundColor: Colors.transparent,
           border: Border(bottom: BorderSide(color: Colors.transparent))
