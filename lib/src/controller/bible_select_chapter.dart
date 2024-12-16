@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 class BibleSelectChapter extends StatelessWidget {
   final String? selectedBook;         // 현재 선택된 책
   final int chapterCount;             // 선택된 책의 장 수
-  final int? selectedChapter;         // 선택된 장
-  final ValueChanged<int> onChapterSelected; // 선택된 장을 전달하는 콜백
+  final String? selectedChapter;         // 선택된 장
+  final ValueChanged<String> onChapterSelected; // 선택된 장을 전달하는 콜백
 
   const BibleSelectChapter({
     super.key,
@@ -41,7 +41,7 @@ class BibleSelectChapter extends StatelessWidget {
             ),
             itemCount: chapterCount,
             itemBuilder: (context, index) {
-              int chapter = index + 1;
+              String chapter = (index + 1).toString();
               return GestureDetector(
                 onTap: () => onChapterSelected(chapter), // 선택된 장을 부모로 전달
                 child: Container(

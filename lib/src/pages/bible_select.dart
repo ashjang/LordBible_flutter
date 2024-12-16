@@ -15,7 +15,7 @@ class _BibleSelectState extends State<BibleSelect> {
   int _selectedSegment = 0;
   String? address = "Please choose book first";
   String? selectedBook;
-  int? selectedChapter;
+  String? selectedChapter;
 
   Widget segmentView() {
     switch (_selectedSegment) {

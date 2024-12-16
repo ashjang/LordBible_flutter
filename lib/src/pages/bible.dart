@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lord_bible/src/data/bible_data.dart';
+import 'package:lord_bible/src/data/getChapterWord.dart';
 import 'package:lord_bible/src/pages/bible_select.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -13,14 +15,29 @@ class Bible extends StatefulWidget {
 class _BibleState extends State<Bible> {
   final List<String> versions = ["KJV흠정역", "KJV", "개역개정", "NIV"];
   List<String> selectedVersions = [];
-  String? selectedBook;
-  int? selectedChapter;
+  String? selectedBook = "Gen";
+  String selectedChapter = "1";
   List<Map<String, String>> verses = []; // 절 데이터 저장
+  final GetChapterWord _getChapterWord = GetChapterWord();
 
   @override
   void initState() {
     super.initState();
     selectedVersions.add(versions[0]);
+    fetchVerses();
+  }
+
+  Future<void> fetchVerses() async {
+    if (selectedBook == null || selectedChapter == null) return;
+
+    try {
+      final fetchedVerses = await _getChapterWord.fetchData("KJV흠정역", toLong['${selectedBook}']!, selectedChapter);
+      setState(() {
+        verses = fetchedVerses;
+      });
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Failed to load data: $e");
+    }
   }
 
   void toggleSelect(String version) {
@@ -77,9 +94,10 @@ class _BibleState extends State<Bible> {
                 .then((result) {
                   if (result != null) {
                     setState(() {
-                      selectedBook = result['selectedBook'] ?? "Genesis";
-                      selectedChapter = result['selectedChapter'] ?? 1;
+                      selectedBook = result['selectedBook'];
+                      selectedChapter = result['selectedChapter'];
                     });
+                    fetchVerses();
                   }
                 })
               }),
@@ -99,7 +117,7 @@ class _BibleState extends State<Bible> {
           _orderVersion(),
           // 리스트
           const SizedBox(height: 20),
-
+          _verseList(),
         ],
       )
     );
@@ -170,26 +188,54 @@ class _BibleState extends State<Bible> {
       children: [
         CupertinoButton(child: Icon(Icons.navigate_before, size: 30,),
             onPressed: () {
-
+              selectedChapter = (int.tryParse(selectedChapter)! - 1).toString();
+              fetchVerses();
             }),
         Text(selectedBook != null && selectedChapter != null
-            ? "$selectedBook  $selectedChapter"
-            : "", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),), //여기
+            ? "${toLong['${selectedBook}']}  $selectedChapter"
+            : "", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
         CupertinoButton(child: Icon(Icons.navigate_next, size: 30),
             onPressed: () {
-
+              selectedChapter = (int.tryParse(selectedChapter)! + 1).toString();
+              fetchVerses();
             }),
       ],
     );
   }
 
   Widget _orderVersion() {
-    double fontSize = MediaQuery.of(context).size.width * 0.033;
+    double fontSize = MediaQuery.of(context).size.width * 0.037;
     return Align(
-      alignment: Alignment.centerRight,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
-        child: Text("order: ${selectedVersions}", style: TextStyle(color: Colors.grey[500], fontSize: fontSize),),)
+        alignment: Alignment.centerRight,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
+          child: Text("order: ${selectedVersions}", style: TextStyle(color: Colors.grey[500], fontSize: fontSize, height: 0.01),),)
+    );
+  }
+
+  Widget _verseList() {
+    if (verses.isEmpty) {
+      return Center(child: Text("No verses available"));
+    }
+    return Expanded(
+      child: ListView.separated(
+        itemCount: verses.length,
+        separatorBuilder: (context, index) => Divider(
+          color: Colors.grey,
+          thickness: 1,
+          height: 0,
+        ),
+        itemBuilder: (context, index) {
+          final verse = verses[index];
+          return ListTile(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 18, // 좌우 패딩 유지
+              vertical: 0,    // 위아래 패딩 최소화 (필요에 따라 조정)
+            ),
+            title: Text("${verse['verse']}  ${verse['word']}", style: TextStyle(height: 1.3),),
+          );
+        },
+      ),
     );
   }
 }
