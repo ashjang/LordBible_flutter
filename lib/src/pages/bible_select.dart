@@ -76,7 +76,7 @@ class _BibleSelectState extends State<BibleSelect> {
       appBar: CupertinoNavigationBar(
           heroTag: 'bible_select_tag',
           transitionBetweenRoutes: false,
-          middle: Text("Select Bible Verses", style: TextStyle(fontWeight: FontWeight.bold)),
+          middle: Text("Select", style: TextStyle(fontWeight: FontWeight.bold)),
           leading: CupertinoButton(padding: EdgeInsets.all(0.0),
               child: Text("Cancel", style: TextStyle(fontSize: 18.0)),
               onPressed: () => {

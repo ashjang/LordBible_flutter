@@ -268,7 +268,6 @@ class _BibleState extends State<Bible> {
             _addressBefAf(),
             // 순서
             _orderVersion(),
-            // SizedBox(height: 5,),
             // 리스트
             _verseList(),
           ],
@@ -336,33 +335,70 @@ class _BibleState extends State<Bible> {
 
   // 말씀구절 라벨 및 이전,다음 버튼
   Widget _addressBefAf() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CupertinoButton(
-          onPressed: (int.tryParse(selectedChapter)! != 1) ? () {
-            setState(() {
-              selectedIndexes.clear();
-              selectedChapter = (int.tryParse(selectedChapter)! - 1).toString();
-              fetchVerses();
-            });
-          } : null,
-          child: Icon(Icons.navigate_before, size: 30, color: int.tryParse(selectedChapter)! != 1 ? Colors.black : Colors.grey),
-        ),
-        Text(selectedBook != null && selectedChapter != null
-            ? "${toLong['${selectedBook}']}  $selectedChapter"
-            : "", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
-        CupertinoButton(
-          onPressed: (int.tryParse(selectedChapter)! != bibleData[selectedBook]) ? () {
-            setState(() {
-              selectedIndexes.clear();
-              selectedChapter = (int.tryParse(selectedChapter)! + 1).toString();
-              fetchVerses();
-            });
-          } : null,
-          child: Icon(Icons.navigate_next, size: 30, color: int.tryParse(selectedChapter)! != bibleData[selectedBook] ? Colors.black : Colors.grey),
-        ),
-      ],
+    return Container (
+      height: 40,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(
+            onTap: (int.tryParse(selectedChapter)! != 1)
+                ? () {
+              setState(() {
+                selectedIndexes.clear();
+                selectedChapter =
+                    (int.tryParse(selectedChapter)! - 1).toString();
+                fetchVerses();
+              });
+            } : null,
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: Center(
+                child: Icon(
+                  Icons.navigate_before,
+                  size: 30, // 아이콘 크기 조절
+                  color: int.tryParse(selectedChapter)! != 1
+                      ? Colors.black
+                      : Colors.grey,
+                ),
+              ),
+            ),
+          ),
+          Text(
+            selectedBook != null && selectedChapter != null
+                ? "${toLong['${selectedBook}']} $selectedChapter"
+                : "",
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          GestureDetector(
+            onTap: (int.tryParse(selectedChapter)! != bibleData[selectedBook])
+                ? () {
+              setState(() {
+                selectedIndexes.clear();
+                selectedChapter =
+                    (int.tryParse(selectedChapter)! + 1).toString();
+                fetchVerses();
+              });
+            } : null,
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: Center(
+                child: Icon(
+                  Icons.navigate_next,
+                  size: 30,
+                  color: int.tryParse(selectedChapter)! != bibleData[selectedBook]
+                      ? Colors.black
+                      : Colors.grey,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -372,7 +408,7 @@ class _BibleState extends State<Bible> {
         alignment: Alignment.centerRight,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
-          child: Text("order: ${selectedVersions}", style: TextStyle(color: Colors.grey[500], fontSize: fontSize,),),)
+          child: Text("order: ${selectedVersions}", style: TextStyle(color: Colors.grey[500], fontSize: 12,),),)
     );
   }
 
@@ -403,7 +439,7 @@ class _BibleState extends State<Bible> {
               if (nextVerse != null && currentVerse != nextVerse) {
                 // 새로운 절 시작: 두꺼운 구분선
                 return Divider(
-                  color: Colors.grey[900],
+                  color: Colors.grey[700],
                   thickness: 0.8,
                   height: 1.0,
                 );
@@ -425,9 +461,9 @@ class _BibleState extends State<Bible> {
                   horizontal: 18, // 좌우 패딩 유지
                   vertical: 0,    // 위아래 패딩 최소화 (필요에 따라 조정)
                 ),
-                tileColor: isSelected ? Colors.grey : null,
+                tileColor: isSelected ? Colors.grey[350] : null,
                 title: Text("${verse['verse']}  ${verse['word']}",
-                  style: TextStyle(height: 1.3, color: verse['color'] ?? Colors.black),),
+                  style: TextStyle(height: 1.3, color: verse['color'] ?? Colors.black, fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal),),
                 onTap: () {
                   setState(() {
                     if (isSelected) {

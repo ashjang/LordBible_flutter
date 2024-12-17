@@ -5,11 +5,13 @@ import 'package:lord_bible/firebase_options.dart';
 import 'package:lord_bible/src/app.dart';
 import 'package:lord_bible/src/binding/init_binding.dart';
 import 'package:lord_bible/src/controller/favorite_controller.dart';
+import 'package:lord_bible/src/controller/scale_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   Get.put(FavoriteController());
+  Get.lazyPut(()=>TextScaleController());
   runApp(const MyApp());
 }
 
@@ -19,13 +21,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final TextScaleController textScaleController = Get.find();
+
     return GetMaterialApp(
       initialBinding: InitBinding(),
       builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), // 글자 크기 고정
-          child: child!,
-        );
+        return Obx(() {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaleFactor: textScaleController.textScale.value, // 실시간 반영
+            ),
+            child: child!,
+          );
+        });
       },
       home: const App(),
     );

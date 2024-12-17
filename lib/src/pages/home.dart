@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
           children: [
             Icon(CupertinoIcons.book_fill, color: Colors.grey[600]),
             SizedBox(width: 5),
-            Text("Today's word", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
+            Text("Today's word", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),
           ],
         ),
         SizedBox(height: 6),
@@ -113,7 +113,7 @@ class _HomeState extends State<Home> {
                 contentPadding: EdgeInsets.symmetric(horizontal: 12),
                 title: Text(
                   "${word['book']} ${word['chapter']}:${word['verse']}   ${word['word']}",
-                  style: TextStyle(color: Colors.black, fontSize: 15),
+                  style: TextStyle(color: Colors.black, fontSize: 12),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -161,7 +161,7 @@ class _HomeState extends State<Home> {
                   children: [
                     Icon(CupertinoIcons.star_fill, color: Colors.yellow,),
                     SizedBox(width: 5),
-                    Text("Favorite words", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
+                    Text("Favorite words", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),
                     SizedBox(width: 6),
                   ],
                 ),

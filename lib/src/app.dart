@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:lord_bible/src/pages/bible.dart';
 import 'package:lord_bible/src/pages/home.dart';
+import 'package:lord_bible/src/pages/setting.dart';
 import './controller/bottom_nav_controller.dart';
 
 class App extends GetView<BottomNavController> {
@@ -18,7 +19,7 @@ class App extends GetView<BottomNavController> {
           const Home(),
           const Bible(),
           Container(child: Center(child: Text("Search")),),
-          Container(child: Center(child: Text("Setting")),),
+          const Setting(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

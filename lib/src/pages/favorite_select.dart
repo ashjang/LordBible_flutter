@@ -65,27 +65,27 @@ class _FavoriteSelectState extends State<FavoriteSelect> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${favoriteData[1]['version']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),
+                  Text("${favoriteData[1]['version']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.red),),
                   SizedBox(height: 8,),
-                  Text("${favoriteData[1]['word']}"),
+                  Text("${favoriteData[1]['word']}", style: TextStyle(color: Colors.red),),
                   SizedBox(height: 40,)
                 ],
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${favoriteData[2]['version']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),
+                  Text("${favoriteData[2]['version']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.blue),),
                   SizedBox(height: 8,),
-                  Text("${favoriteData[2]['word']}"),
+                  Text("${favoriteData[2]['word']}", style: TextStyle(color: Colors.blue),),
                   SizedBox(height: 40,)
                 ],
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${favoriteData[3]['version']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),
+                  Text("${favoriteData[3]['version']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.green),),
                   SizedBox(height: 8,),
-                  Text("${favoriteData[3]['word']}"),
+                  Text("${favoriteData[3]['word']}", style: TextStyle(color: Colors.green),),
                 ],
               )
             ],
