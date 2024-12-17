@@ -45,52 +45,38 @@ class _FavoriteSelectState extends State<FavoriteSelect> {
         transitionBetweenRoutes: false,
         middle: Text("${widget.word['book']} ${widget.word['chapter']}:${widget.word['verse']}", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
-      body: isLoading ? Expanded(child: Center(child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey),))
+      body: isLoading ? Center(child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey),)
           : Padding(
-        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.1,
-            vertical: MediaQuery.of(context).size.height * 0.05),
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.1,
+          vertical: MediaQuery.of(context).size.height * 0.05,
+        ),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
+            children: List.generate(favoriteData.length, (index) {
+              final colors = [Colors.black, Colors.red, Colors.blue, Colors.green];
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${favoriteData[0]['version']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),
-                  SizedBox(height: 8,),
-                  Text("${favoriteData[0]['word']}"),
-                  SizedBox(height: 40,)
+                  Text(
+                    "${favoriteData[index]['version']}",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                        color: colors[index % colors.length]),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "${favoriteData[index]['word']}",
+                    style: TextStyle(color: colors[index % colors.length]),
+                  ),
+                  SizedBox(height: 40),
                 ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("${favoriteData[1]['version']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.red),),
-                  SizedBox(height: 8,),
-                  Text("${favoriteData[1]['word']}", style: TextStyle(color: Colors.red),),
-                  SizedBox(height: 40,)
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("${favoriteData[2]['version']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.blue),),
-                  SizedBox(height: 8,),
-                  Text("${favoriteData[2]['word']}", style: TextStyle(color: Colors.blue),),
-                  SizedBox(height: 40,)
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("${favoriteData[3]['version']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.green),),
-                  SizedBox(height: 8,),
-                  Text("${favoriteData[3]['word']}", style: TextStyle(color: Colors.green),),
-                ],
-              )
-            ],
+              );
+            }),
           ),
-        )
+        ),
       ),
     );
   }
