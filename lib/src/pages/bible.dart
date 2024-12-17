@@ -112,7 +112,7 @@ class _BibleState extends State<Bible> {
         verses = mergedVerses;
       });
     } catch (e) {
-      Fluttertoast.showToast(msg: "Failed to load data: $e");
+      Fluttertoast.showToast(msg: "Loading...");
     } finally {
       setState(() {
         isLoading = false;
