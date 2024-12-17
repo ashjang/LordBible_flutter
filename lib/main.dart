@@ -21,6 +21,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       initialBinding: InitBinding(),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), // 글자 크기 고정
+          child: child!,
+        );
+      },
       home: const App(),
     );
   }
