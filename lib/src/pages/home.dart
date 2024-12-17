@@ -8,6 +8,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:lord_bible/src/controller/favorite_controller.dart';
 import 'package:lord_bible/src/data/getRandomWord.dart';
+import 'package:lord_bible/src/pages/favorite_select.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
@@ -85,7 +86,7 @@ class _HomeState extends State<Home> {
           shrinkWrap: true,
           itemCount: favoriteWords.length,
           separatorBuilder: (context, index) => Divider(
-            color: Colors.grey[900],
+            color: Colors.grey,
             thickness: 0.8,
             height: 1.0,
           ),
@@ -116,6 +117,10 @@ class _HomeState extends State<Home> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                
+                onTap: () {
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => FavoriteSelect(word: word,)));
+                },
               ),
             );
           },
