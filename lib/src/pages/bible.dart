@@ -235,42 +235,44 @@ class _BibleState extends State<Bible> {
             middle: Text("Bible", style: TextStyle(fontWeight: FontWeight.bold)),
             leading: CupertinoButton(padding: EdgeInsets.zero, child: Text("Menu", style: TextStyle(fontSize: 18.0),), onPressed: () => _showMenu(context)),
             trailing: CupertinoButton(padding: EdgeInsets.all(0.0),
-              child: Text("Select", style: TextStyle(fontSize: 18.0),),
-              onPressed: () => {
-                Navigator.push(context, CupertinoPageRoute(builder: (context) => BibleSelect()))
-                .then((result) async {
-                  if (result != null) {
-                    setState(() {
-                      selectedBook = result['selectedBook'];
-                      selectedChapter = result['selectedChapter'];
-                      selectedIndexes.clear();
-                    });
-                    await _savePreferences();
-                    fetchVerses().then((_) {
-                      _scrollController.jumpTo(0);
-                    });
-                  }
-                })
-              }),
+                child: Text("Select", style: TextStyle(fontSize: 18.0),),
+                onPressed: () => {
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => BibleSelect()))
+                      .then((result) async {
+                    if (result != null) {
+                      setState(() {
+                        selectedBook = result['selectedBook'];
+                        selectedChapter = result['selectedChapter'];
+                        selectedIndexes.clear();
+                      });
+                      await _savePreferences();
+                      fetchVerses().then((_) {
+                        if (_scrollController.positions.isNotEmpty) {
+                          _scrollController.jumpTo(0);
+                        }
+                      });
+                    }
+                  })
+                }),
             backgroundColor: Colors.transparent,
             border: Border(bottom: BorderSide(color: Colors.transparent))
         ),
 
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 버전 선택
-          _versionButton(),
-          // 주소 선택(이전,이후)
-          _addressBefAf(),
-          // 순서
-          _orderVersion(),
-          // SizedBox(height: 5,),
-          // 리스트
-          _verseList(),
-        ],
-      )
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 버전 선택
+            _versionButton(),
+            // 주소 선택(이전,이후)
+            _addressBefAf(),
+            // 순서
+            _orderVersion(),
+            // SizedBox(height: 5,),
+            // 리스트
+            _verseList(),
+          ],
+        )
     );
   }
 
@@ -337,19 +339,29 @@ class _BibleState extends State<Bible> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CupertinoButton(child: Icon(Icons.navigate_before, size: 30,),
-            onPressed: () {
+        CupertinoButton(
+          onPressed: (int.tryParse(selectedChapter)! != 1) ? () {
+            setState(() {
+              selectedIndexes.clear();
               selectedChapter = (int.tryParse(selectedChapter)! - 1).toString();
               fetchVerses();
-            }),
+            });
+          } : null,
+          child: Icon(Icons.navigate_before, size: 30, color: int.tryParse(selectedChapter)! != 1 ? Colors.black : Colors.grey),
+        ),
         Text(selectedBook != null && selectedChapter != null
             ? "${toLong['${selectedBook}']}  $selectedChapter"
             : "", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
-        CupertinoButton(child: Icon(Icons.navigate_next, size: 30),
-            onPressed: () {
+        CupertinoButton(
+          onPressed: (int.tryParse(selectedChapter)! != bibleData[selectedBook]) ? () {
+            setState(() {
+              selectedIndexes.clear();
               selectedChapter = (int.tryParse(selectedChapter)! + 1).toString();
               fetchVerses();
-            }),
+            });
+          } : null,
+          child: Icon(Icons.navigate_next, size: 30, color: int.tryParse(selectedChapter)! != bibleData[selectedBook] ? Colors.black : Colors.grey),
+        ),
       ],
     );
   }
@@ -374,7 +386,7 @@ class _BibleState extends State<Bible> {
     }
 
     return Expanded(
-      child: Scrollbar(
+        child: Scrollbar(
           thumbVisibility: false,
           thickness: 5.0,
           radius: Radius.circular(10.0),
@@ -430,7 +442,7 @@ class _BibleState extends State<Bible> {
               );
             },
           ),
-      )
+        )
     );
   }
 }
