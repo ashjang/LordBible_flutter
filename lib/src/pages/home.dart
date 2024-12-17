@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
@@ -43,6 +44,14 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<void> _saveFavoriteWords() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> updatedFavorites = favoriteWords.map((word) {
+      return jsonEncode(word);
+    }).toList();
+    await prefs.setStringList('favoriteVerses', updatedFavorites);
+  }
+
   Widget _todayWord() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,15 +91,32 @@ class _HomeState extends State<Home> {
           ),
           itemBuilder: (context, index) {
             final word = favoriteWords[index];
-            return ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 12,
+            return Dismissible(
+              key: Key(word.toString()), // 고유 키 사용
+              direction: DismissDirection.endToStart, // 왼쪽에서 오른쪽 슬라이드
+              background: Container(
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Icon(Icons.delete, color: Colors.white, size: 30),
               ),
-              title: Text("${word['book']} ${word['chapter']}:${word['verse']}   ${word['word']}"
-                , style: TextStyle(color: Colors.black, fontSize: 15)
-                , maxLines: 1
-                , overflow: TextOverflow.ellipsis,),
+              onDismissed: (direction) {
+                setState(() {
+                  favoriteWords.removeAt(index);
+                  _saveFavoriteWords();
+                });
+                Fluttertoast.showToast(msg: "Deleted from favorite words", backgroundColor: Colors.grey);
+              },
+              child: ListTile(
+                dense: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                title: Text(
+                  "${word['book']} ${word['chapter']}:${word['verse']}   ${word['word']}",
+                  style: TextStyle(color: Colors.black, fontSize: 15),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             );
           },
         ),
@@ -120,18 +146,21 @@ class _HomeState extends State<Home> {
                       SizedBox(height: 20),
                       _todayWord(),
                       SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Icon(CupertinoIcons.star_fill, color: Colors.yellow,),
-                          SizedBox(width: 5),
-                          Text("Favorite words", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
-                          SizedBox(width: 6),
-                        ],
-                      ),
+
                     ],
                   )
               ),
-
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.1),
+                child: Row(
+                  children: [
+                    Icon(CupertinoIcons.star_fill, color: Colors.yellow,),
+                    SizedBox(width: 5),
+                    Text("Favorite words", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
+                    SizedBox(width: 6),
+                  ],
+                ),
+              ),
               _favoriteWord(),
             ],
           )
