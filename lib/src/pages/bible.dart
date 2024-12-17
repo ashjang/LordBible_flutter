@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:lord_bible/src/data/bible_data.dart';
 import 'package:lord_bible/src/data/getChapterWord.dart';
 import 'package:lord_bible/src/pages/bible_select.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../controller/favorite_controller.dart';
 
 class Bible extends StatefulWidget {
   const Bible({super.key});
@@ -25,8 +31,11 @@ class _BibleState extends State<Bible> {
   List<Map<String, dynamic>> verses = [];
   Set<int> selectedIndexes = {};
   bool isLoading = false;
+
   final GetChapterWord _getChapterWord = GetChapterWord();
   final ScrollController _scrollController = ScrollController();
+  final FavoriteController favoriteController = Get.find<FavoriteController>();
+
 
   @override
   void initState() {
@@ -111,6 +120,50 @@ class _BibleState extends State<Bible> {
     }
   }
 
+  Future<void> _saveFavoriteVerse() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // 1. 기존 favoriteWords 불러오기
+    List<String> favoriteJson = prefs.getStringList('favoriteVerses') ?? [];
+    List<Map<String, String>> existingFavorites = favoriteJson.map((jsonString) {
+      return Map<String, String>.from(jsonDecode(jsonString));
+    }).toList();
+
+    // 2. 선택된 말씀 추가
+    for (int index in selectedIndexes) {
+      final verse = verses[index];
+      Map<String, String> verseData = {
+        "book": toLong[selectedBook]!,
+        "chapter": selectedChapter,
+        "verse": verse['verse'],
+        "word": verse['word'],
+      };
+
+      // 중복 확인 후 추가
+      bool isDuplicate = existingFavorites.any((fav) =>
+      fav['book'] == verseData['book'] &&
+          fav['chapter'] == verseData['chapter'] &&
+          fav['verse'] == verseData['verse']);
+
+      if (!isDuplicate) {
+        existingFavorites.add(verseData);
+      }
+    }
+
+    // 3. 업데이트된 데이터를 JSON으로 다시 저장
+    List<String> updatedFavorites = existingFavorites.map((verse) {
+      return jsonEncode(verse);
+    }).toList();
+
+    await prefs.setStringList('favoriteVerses', updatedFavorites);
+
+    setState(() {
+      selectedIndexes.clear();
+    });
+
+    favoriteController.refreshFavorites();
+  }
+
   void toggleSelect(String version) {
     setState(() {
       if (version == versions[0]) return;
@@ -138,6 +191,7 @@ class _BibleState extends State<Bible> {
           }, child: Text("Copy")),
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
+            _saveFavoriteVerse();
             Fluttertoast.showToast(msg: "Added to favorites");
           }, child: Text("Highlight")),
           CupertinoActionSheetAction(onPressed: () {
@@ -360,7 +414,8 @@ class _BibleState extends State<Bible> {
                   vertical: 0,    // 위아래 패딩 최소화 (필요에 따라 조정)
                 ),
                 tileColor: isSelected ? Colors.grey : null,
-                title: Text("${verse['verse']}  ${verse['word']}", style: TextStyle(height: 1.3, color: verse['color'] ?? Colors.black),),
+                title: Text("${verse['verse']}  ${verse['word']}",
+                  style: TextStyle(height: 1.3, color: verse['color'] ?? Colors.black),),
                 onTap: () {
                   setState(() {
                     if (isSelected) {

@@ -4,12 +4,12 @@ import 'package:get/get.dart';
 import 'package:lord_bible/firebase_options.dart';
 import 'package:lord_bible/src/app.dart';
 import 'package:lord_bible/src/binding/init_binding.dart';
+import 'package:lord_bible/src/controller/favorite_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-
-  );
+  await Firebase.initializeApp();
+  Get.put(FavoriteController());
   runApp(const MyApp());
 }
 
