@@ -15,7 +15,7 @@ class BibleSelectBook extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double textScaleFactor = MediaQuery.of(context).textScaleFactor;
-    int crossAxisCount = textScaleFactor > 1.0 ? 4 : 5;
+    int crossAxisCount = textScaleFactor > 1.3 ? 4 : 5;
 
     return SingleChildScrollView(
       child: Column(
@@ -24,14 +24,14 @@ class BibleSelectBook extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Text("Old Testament",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black54),
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black54),
             ),
           ),
           buildGridView(context, oldTestament, crossAxisCount),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Text("New Testament",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black54),
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black54),
             ),
           ),
           buildGridView(context, newTestament, crossAxisCount),

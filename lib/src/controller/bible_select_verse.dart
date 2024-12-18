@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class BibleSelectChapter extends StatelessWidget {
+class BibleSelectVerse extends StatelessWidget {
   final String? selectedBook;         // 현재 선택된 책
-  final int chapterCount;             // 선택된 책의 장 수
+  final int verseCount;             // 선택된 책의 잘 수
   final String? selectedChapter;         // 선택된 장
-  final ValueChanged<String> onChapterSelected; // 선택된 장을 전달하는 콜백
+  final String? selectedVerse;         // 선택된 절
+  final ValueChanged<String> onVerseSelected; // 선택된 장을 전달하는 콜백
 
-  const BibleSelectChapter({
+  const BibleSelectVerse({
     super.key,
     required this.selectedBook,
-    required this.chapterCount,
+    required this.verseCount,
     required this.selectedChapter,
-    required this.onChapterSelected
+    required this.selectedVerse,
+    required this.onVerseSelected
   });
 
   @override
@@ -21,15 +23,15 @@ class BibleSelectChapter extends StatelessWidget {
     int crossAxisCount = textScaleFactor > 1.3 ? 5 : 6;
     double fontSize = MediaQuery.of(context).size.width * 0.04;
 
-    if (selectedBook == null) {
-      return const Center(child: Text("Please choose book first"));
+    if (selectedBook == null || selectedChapter == null) {
+      return const Center(child: Text("Please choose book or verse first"));
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20)
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20)
         ),
         Expanded(
           child: GridView.builder(
@@ -39,25 +41,25 @@ class BibleSelectChapter extends StatelessWidget {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
-            itemCount: chapterCount,
+            itemCount: verseCount,
             itemBuilder: (context, index) {
-              String chapter = (index + 1).toString();
+              String verse = (index + 1).toString();
               return GestureDetector(
-                onTap: () => onChapterSelected(chapter), // 선택된 장을 부모로 전달
+                onTap: () => onVerseSelected(verse), // 선택된 장을 부모로 전달
                 child: Container(
                   decoration: BoxDecoration(
-                    color: selectedChapter == chapter
+                    color: selectedVerse == verse
                         ? CupertinoColors.systemFill.withOpacity(0.7)
                         : CupertinoColors.systemGrey4,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
                     child: Text(
-                      "$chapter",
+                      "$verse",
                       style: TextStyle(
                         fontSize: fontSize,
-                        fontWeight: selectedChapter == chapter ? FontWeight.bold : FontWeight.normal,
-                        color: selectedChapter == chapter ? Colors.white : Colors.black,
+                        fontWeight: selectedVerse == verse ? FontWeight.bold : FontWeight.normal,
+                        color: selectedVerse == verse ? Colors.white : Colors.black,
                       ),
                     ),
                   ),

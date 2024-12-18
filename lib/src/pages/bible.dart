@@ -28,6 +28,7 @@ class _BibleState extends State<Bible> {
   String? defaultVersion = "KJV흠정역";
   String? selectedBook = "Gen";
   String selectedChapter = "1";
+  String selectedVerse = "1";
   List<Map<String, dynamic>> verses = [];
   Set<int> selectedIndexes = {};
   bool isLoading = false;
@@ -35,7 +36,7 @@ class _BibleState extends State<Bible> {
   final GetChapterWord _getChapterWord = GetChapterWord();
   final ScrollController _scrollController = ScrollController();
   final FavoriteController favoriteController = Get.find<FavoriteController>();
-
+  Map<int, GlobalKey> _itemKeys = {};
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class _BibleState extends State<Bible> {
       defaultVersion = prefs.getString('defaultVersion') ?? "KJV흠정역";
       selectedBook = prefs.getString('selectedBook') ?? "Gen";
       selectedChapter = prefs.getString('selectedChapter') ?? "1";
+      selectedVerse = prefs.getString('selectedVerse') ?? "1";
     });
     fetchVerses();
   }
@@ -243,13 +245,11 @@ class _BibleState extends State<Bible> {
                       setState(() {
                         selectedBook = result['selectedBook'];
                         selectedChapter = result['selectedChapter'];
+                        selectedVerse = result['selectedVerse'];
                         selectedIndexes.clear();
                       });
                       await _savePreferences();
                       fetchVerses().then((_) {
-                        if (_scrollController.positions.isNotEmpty) {
-                          _scrollController.jumpTo(0);
-                        }
                       });
                     }
                   })

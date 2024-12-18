@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/services.dart';
 
 class GetChapterWord {
   final FirebaseDatabase db = FirebaseDatabase.instance;
@@ -21,6 +25,22 @@ class GetChapterWord {
     } catch(e) {
       print("ERROR: $e");
       return [];
+    }
+  }
+
+  Future<int> getNumOfVerse(String book, String chapter) async {
+    try {
+      DatabaseReference ref = db.ref().child('NIV').child(book).child(chapter);
+      final snapshot = await ref.get();
+      if (snapshot.exists) {
+        final data = List<Map<dynamic, dynamic>>.from(snapshot.value as List);
+        return data.length;
+      } else {
+        return -1;
+      }
+    } catch(e) {
+      print("ERROR: $e");
+      return -1;
     }
   }
 }

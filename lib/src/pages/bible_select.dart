@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:lord_bible/src/controller/bible_select_book.dart';
 import 'package:lord_bible/src/controller/bible_select_chapter.dart';
 import 'package:lord_bible/src/data/bible_data.dart';
+import 'package:lord_bible/src/data/getChapterWord.dart';
+
+import '../controller/bible_select_verse.dart';
 
 class BibleSelect extends StatefulWidget {
   const BibleSelect({super.key});
@@ -16,6 +19,7 @@ class _BibleSelectState extends State<BibleSelect> {
   String? address = "Please choose book first";
   String? selectedBook;
   String? selectedChapter;
+  String? selectedVerse;
 
   void _showAlert(BuildContext context, String message) {
     showCupertinoDialog(
@@ -48,7 +52,8 @@ class _BibleSelectState extends State<BibleSelect> {
             setState(() {
               selectedBook = book;
               selectedChapter = null;
-              address = "book: $book";
+              selectedVerse = null;
+              address = "$book";
               _selectedSegment = 1;
             });
           },
@@ -61,10 +66,46 @@ class _BibleSelectState extends State<BibleSelect> {
           onChapterSelected: (chapter) {
             setState(() {
               selectedChapter = chapter;
-              address = "book: $selectedBook\nchapter: $chapter";
+              address = "$selectedBook $chapter";
+              _selectedSegment = 2;
             });
           },
         );
+      case 2:
+        if (selectedBook != null && selectedChapter != null) {
+          return FutureBuilder<int>(
+            future: GetChapterWord().getNumOfVerse(toLong['${selectedBook}']!, selectedChapter!),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey));
+              } else if (snapshot.hasError) {
+                return Center(child: Text("Error: ${snapshot.error}"));
+              } else if (!snapshot.hasData || snapshot.data! < 0) {
+                return const Center(child: Text("Invalid data or no verses available"));
+              } else {
+                return BibleSelectVerse(
+                  selectedBook: selectedBook,
+                  verseCount: snapshot.data!,
+                  selectedChapter: selectedChapter,
+                  selectedVerse: selectedVerse,
+                  onVerseSelected: (verse) {
+                    setState(() {
+                      selectedVerse = verse;
+                      address = "$selectedBook $selectedChapter:$verse";
+                      Navigator.pop(context, {
+                        'selectedBook': selectedBook,
+                        'selectedChapter': selectedChapter,
+                        'selectedVerse': selectedVerse,
+                      });
+                    });
+                  },
+                );
+              }
+            },
+          );
+        } else {
+          return const Center(child: Text("Please choose book or verse first"));
+        }
       default:
         return Center(child: Text('Unknown'),);
     }
@@ -86,7 +127,7 @@ class _BibleSelectState extends State<BibleSelect> {
               child: Text("Done", style: TextStyle(fontSize: 18.0),),
               onPressed: () => {
                 if (selectedBook == null || selectedChapter == null) {
-                  _showAlert(context, "Please select both a book and a chapter")
+                  _showAlert(context, "Please select")
                 } else {
                   Navigator.pop(context, {
                     'selectedBook': selectedBook,
@@ -114,6 +155,10 @@ class _BibleSelectState extends State<BibleSelect> {
                   1: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text('Chapter', style:
                     TextStyle(fontWeight: FontWeight.bold, color: _selectedSegment == 1 ? Colors.black38 : Colors.white),),
+                  ),
+                  2: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text('Chapter', style:
+                    TextStyle(fontWeight: FontWeight.bold, color: _selectedSegment == 2 ? Colors.black38 : Colors.white),),
                   ),
                 },
                 groupValue: _selectedSegment,
