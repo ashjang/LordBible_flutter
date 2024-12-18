@@ -36,7 +36,7 @@ class _BibleState extends State<Bible> {
   final GetChapterWord _getChapterWord = GetChapterWord();
   final ScrollController _scrollController = ScrollController();
   final FavoriteController favoriteController = Get.find<FavoriteController>();
-  Map<int, GlobalKey> _itemKeys = {};
+  final Map<int, GlobalKey> keyMap = {};
 
   @override
   void initState() {
@@ -110,6 +110,15 @@ class _BibleState extends State<Bible> {
         }
       }
 
+      // keyMap 초기화
+      final newKeyMap = <int, GlobalKey>{};
+      for (int i = 0; i < mergedVerses.length; i++) {
+        newKeyMap[i] = GlobalKey();
+      }
+
+      keyMap.clear(); // 기존 keyMap 초기화
+      keyMap.addAll(newKeyMap);
+
       setState(() {
         verses = mergedVerses;
       });
@@ -167,16 +176,16 @@ class _BibleState extends State<Bible> {
   }
 
   void toggleSelect(String version) {
+    if (version == versions[0]) return;
     setState(() {
-      if (version == versions[0]) return;
-
       if (selectedVersions.contains(version)) {
         selectedVersions.remove(version);
       } else {
         selectedVersions.add(version);
       }
 
-      fetchVerses();
+      fetchVerses().then((_) async {
+      });
     });
   }
 
@@ -228,6 +237,18 @@ class _BibleState extends State<Bible> {
     });
   }
 
+  Future<void> scrollToVerse(int index) async {
+    if (keyMap.containsKey(index)) {
+      final key = keyMap[index]!;
+      Scrollable.ensureVisible(
+        key.currentContext!,
+        duration: Duration(microseconds: 200),
+      );
+    } else {
+      Fluttertoast.showToast(msg: "Key not found for index $index");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -249,7 +270,9 @@ class _BibleState extends State<Bible> {
                         selectedIndexes.clear();
                       });
                       await _savePreferences();
-                      fetchVerses().then((_) {
+                      fetchVerses().then((_) async {
+                        await Future.delayed(Duration(milliseconds: 500));
+                        scrollToVerse((int.parse(selectedVerse) - 1) * selectedVersions.length);
                       });
                     }
                   })
@@ -366,7 +389,7 @@ class _BibleState extends State<Bible> {
           ),
           Text(
             selectedBook != null && selectedChapter != null
-                ? "${toLong['${selectedBook}']} $selectedChapter"
+                ? "${toKorLong['${selectedBook}']} $selectedChapter"
                 : "",
             style: const TextStyle(
               fontSize: 15,
@@ -428,6 +451,7 @@ class _BibleState extends State<Bible> {
           radius: Radius.circular(10.0),
           controller: _scrollController,
           child: ListView.separated(
+            cacheExtent: 100000,
             controller: _scrollController,
             itemCount: verses.length,
             separatorBuilder: (context, index) {
@@ -457,13 +481,15 @@ class _BibleState extends State<Bible> {
               final isSelected = selectedIndexes.contains(index);
 
               return ListTile(
+                key: keyMap[index],
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 18, // 좌우 패딩 유지
                   vertical: 0,    // 위아래 패딩 최소화 (필요에 따라 조정)
                 ),
                 tileColor: isSelected ? Colors.grey[350] : null,
                 title: Text("${verse['verse']}  ${verse['word']}",
-                  style: TextStyle(height: 1.3, color: verse['color'] ?? Colors.black, fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal),),
+                  style: TextStyle(height: 1.3, color: verse['color'] ?? Colors.black,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal),),
                 onTap: () {
                   setState(() {
                     if (isSelected) {

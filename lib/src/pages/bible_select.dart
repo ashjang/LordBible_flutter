@@ -157,7 +157,7 @@ class _BibleSelectState extends State<BibleSelect> {
                     TextStyle(fontWeight: FontWeight.bold, color: _selectedSegment == 1 ? Colors.black38 : Colors.white),),
                   ),
                   2: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text('Chapter', style:
+                    child: Text('Verse', style:
                     TextStyle(fontWeight: FontWeight.bold, color: _selectedSegment == 2 ? Colors.black38 : Colors.white),),
                   ),
                 },
