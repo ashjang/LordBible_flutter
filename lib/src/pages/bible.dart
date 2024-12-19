@@ -296,7 +296,7 @@ class _BibleState extends State<Bible> {
       final key = keyMap[index]!;
       Scrollable.ensureVisible(
         key.currentContext!,
-        duration: Duration(milliseconds: 300),
+        duration: Duration(microseconds: 500),
       );
     } else {
       Fluttertoast.showToast(msg: "Key not found for index $index");
@@ -335,18 +335,38 @@ class _BibleState extends State<Bible> {
             border: Border(bottom: BorderSide(color: Colors.transparent))
         ),
 
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        body: Stack(
           children: [
-            // 버전 선택
-            _versionButton(),
-            // 주소 선택(이전,이후)
-            _addressBefAf(),
-            // 순서
-            _orderVersion(),
-            // 리스트
-            _verseList(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 버전 선택
+                _versionButton(),
+                // 주소 선택(이전,이후)
+                _addressBefAf(),
+                // 순서
+                _orderVersion(),
+                // 리스트
+                _verseList(),
+              ],
+            ),
+
+            if (isLoading)
+              Positioned.fill(
+                child: IgnorePointer(
+                  ignoring: false, // 터치 이벤트 전달 허용
+                  child: Container(
+                    color: Colors.black45.withOpacity(0.5), // 반투명 배경
+                    child: Center(
+                      child: CupertinoActivityIndicator(
+                        radius: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         )
     );
@@ -490,10 +510,6 @@ class _BibleState extends State<Bible> {
   }
 
   Widget _verseList() {
-    if (isLoading) {
-      return Expanded(child: Center(child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey),));
-    }
-
     if (verses.isEmpty) {
       return Center(child: Text("No verses available"));
     }
