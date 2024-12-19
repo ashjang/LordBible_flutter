@@ -123,18 +123,6 @@ class _BibleSelectState extends State<BibleSelect> {
               onPressed: () => {
                 Navigator.pop(context)
               }),
-          trailing: CupertinoButton(padding: EdgeInsets.all(0.0),
-              child: Text("Done", style: TextStyle(fontSize: 18.0),),
-              onPressed: () => {
-                if (selectedBook == null || selectedChapter == null) {
-                  _showAlert(context, "Please select")
-                } else {
-                  Navigator.pop(context, {
-                    'selectedBook': selectedBook,
-                    'selectedChapter': selectedChapter,
-                    })
-                }
-              }),
           backgroundColor: Colors.transparent,
           border: Border(bottom: BorderSide(color: Colors.transparent))
       ),
