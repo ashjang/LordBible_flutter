@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,7 +19,7 @@ class App extends GetView<BottomNavController> {
         children: [
           const Home(),
           const Bible(),
-          Container(child: Center(child: Text("Search")),),
+          Container(child: Center(child: Text(tr("Search"))),),
           const Setting(),
         ],
       ),
@@ -31,22 +32,22 @@ class App extends GetView<BottomNavController> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home),
-            label: 'Home',
+            label: tr('Home')
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.book_outlined),
               activeIcon: Icon(Icons.book),
-              label: 'Bible'
+              label: tr('Bible')
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.search_outlined),
               activeIcon: Icon(Icons.search),
-              label: 'Search'
+              label: tr('Search')
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.settings_outlined),
               activeIcon: Icon(Icons.settings),
-              label: 'Setting'
+              label: tr('Setting')
           )
         ]
       ),

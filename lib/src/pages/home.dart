@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:lord_bible/src/controller/favorite_controller.dart';
+import 'package:lord_bible/src/data/bible_data.dart';
 import 'package:lord_bible/src/data/getRandomWord.dart';
 import 'package:lord_bible/src/pages/favorite_select.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,7 +63,7 @@ class _HomeState extends State<Home> {
           children: [
             Icon(CupertinoIcons.book_fill, color: Colors.grey[600]),
             SizedBox(width: 5),
-            Text("Today's word", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
+            Text(tr("Today's word"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
           ],
         ),
         SizedBox(height: 6),
@@ -106,13 +108,13 @@ class _HomeState extends State<Home> {
                   favoriteWords.removeAt(index);
                   _saveFavoriteWords();
                 });
-                Fluttertoast.showToast(msg: "Deleted from favorite words", backgroundColor: Colors.grey);
+                Fluttertoast.showToast(msg: tr("Deleted from favorite words"), backgroundColor: Colors.grey);
               },
               child: ListTile(
                 dense: true,
                 contentPadding: EdgeInsets.symmetric(horizontal: 12),
                 title: Text(
-                  "${word['book']} ${word['chapter']}:${word['verse']}   ${word['word']}",
+                  "${tr("ShortNames.${toShort[word['book']!]!}")} ${word['chapter']}:${word['verse']}   ${word['word']}",
                   style: TextStyle(color: Colors.black, fontSize: 14),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -137,7 +139,7 @@ class _HomeState extends State<Home> {
       _loadFavoriteWords();
       return Scaffold(
           appBar: CupertinoNavigationBar(
-              middle: Text("Home", style: TextStyle(fontWeight: FontWeight.bold)),
+              middle: Text(tr("Home"), style: TextStyle(fontWeight: FontWeight.bold)),
               backgroundColor: Colors.transparent,
               border: Border(bottom: BorderSide(color: Colors.transparent))
           ),
@@ -161,7 +163,7 @@ class _HomeState extends State<Home> {
                   children: [
                     Icon(CupertinoIcons.star_fill, color: Colors.yellow,),
                     SizedBox(width: 5),
-                    Text("Favorite words", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
+                    Text(tr("Favorite words"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
                     SizedBox(width: 6),
                   ],
                 ),

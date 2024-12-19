@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lord_bible/src/controller/bible_select_book.dart';
@@ -16,32 +17,10 @@ class BibleSelect extends StatefulWidget {
 
 class _BibleSelectState extends State<BibleSelect> {
   int _selectedSegment = 0;
-  String? address = "Please choose book first";
+  String? address = tr("Please choose book first");
   String? selectedBook;
   String? selectedChapter;
   String? selectedVerse;
-
-  void _showAlert(BuildContext context, String message) {
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text("Warning"),
-          content: Text(message),
-          actions: [
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
 
   Widget segmentView() {
     switch (_selectedSegment) {
@@ -66,7 +45,7 @@ class _BibleSelectState extends State<BibleSelect> {
           onChapterSelected: (chapter) {
             setState(() {
               selectedChapter = chapter;
-              address = "$selectedBook $chapter";
+              address = "${tr(selectedBook!)} $chapter";
               _selectedSegment = 2;
             });
           },
@@ -91,7 +70,7 @@ class _BibleSelectState extends State<BibleSelect> {
                   onVerseSelected: (verse) {
                     setState(() {
                       selectedVerse = verse;
-                      address = "$selectedBook $selectedChapter:$verse";
+                      address = "${tr(selectedBook!)} $selectedChapter:$verse";
                       Navigator.pop(context, {
                         'selectedBook': selectedBook,
                         'selectedChapter': selectedChapter,
@@ -104,7 +83,7 @@ class _BibleSelectState extends State<BibleSelect> {
             },
           );
         } else {
-          return const Center(child: Text("Please choose book or verse first"));
+          return Center(child: Text(tr("Please choose book and verse")));
         }
       default:
         return Center(child: Text('Unknown'),);
@@ -117,9 +96,9 @@ class _BibleSelectState extends State<BibleSelect> {
       appBar: CupertinoNavigationBar(
           heroTag: 'bible_select_tag',
           transitionBetweenRoutes: false,
-          middle: Text("Select", style: TextStyle(fontWeight: FontWeight.bold)),
+          middle: Text(tr("Select"), style: TextStyle(fontWeight: FontWeight.bold)),
           leading: CupertinoButton(padding: EdgeInsets.all(0.0),
-              child: Text("Cancel", style: TextStyle(fontSize: 18.0)),
+              child: Text(tr("Cancel"), style: TextStyle(fontSize: 18.0)),
               onPressed: () => {
                 Navigator.pop(context)
               }),
@@ -137,15 +116,15 @@ class _BibleSelectState extends State<BibleSelect> {
 
                 children: {
                   0: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text('Book', style:
+                    child: Text(tr('Book'), style:
                     TextStyle(fontWeight: FontWeight.bold, color: _selectedSegment == 0 ? Colors.black38 : Colors.white),),
                   ),
                   1: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text('Chapter', style:
+                    child: Text(tr('Chapter'), style:
                     TextStyle(fontWeight: FontWeight.bold, color: _selectedSegment == 1 ? Colors.black38 : Colors.white),),
                   ),
                   2: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text('Verse', style:
+                    child: Text(tr('Verse'), style:
                     TextStyle(fontWeight: FontWeight.bold, color: _selectedSegment == 2 ? Colors.black38 : Colors.white),),
                   ),
                 },
@@ -158,7 +137,7 @@ class _BibleSelectState extends State<BibleSelect> {
             ),
           ),
 
-          Text("${address}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),),
+          Text("${tr(address!)}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),),
           SizedBox(height: 10,),
           Expanded(child: segmentView())
         ],

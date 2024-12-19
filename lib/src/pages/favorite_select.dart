@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lord_bible/src/data/bible_data.dart';
 import 'package:lord_bible/src/data/getFavoriteWord.dart';
 
 class FavoriteSelect extends StatefulWidget {
@@ -43,7 +45,7 @@ class _FavoriteSelectState extends State<FavoriteSelect> {
       appBar: CupertinoNavigationBar(
         heroTag: 'favorite_select_tag',
         transitionBetweenRoutes: false,
-        middle: Text("${widget.word['book']} ${widget.word['chapter']}:${widget.word['verse']}", style: TextStyle(fontWeight: FontWeight.bold)),
+        middle: Text("${tr(widget.word['book']!)} ${widget.word['chapter']}:${widget.word['verse']}", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: isLoading ? Center(child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey),)
           : Padding(

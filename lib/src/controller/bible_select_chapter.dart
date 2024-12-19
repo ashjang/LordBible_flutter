@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class BibleSelectChapter extends StatelessWidget {
     double fontSize = MediaQuery.of(context).size.width * 0.04;
 
     if (selectedBook == null) {
-      return const Center(child: Text("Please choose book first"));
+      return Center(child: Text(tr("Please choose book first")));
     }
 
     return Column(

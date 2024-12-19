@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lord_bible/src/data/bible_data.dart';
@@ -21,16 +22,16 @@ class BibleSelectBook extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Text("Old Testament",
+            child: Text(tr("Old Testament"),
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black54),
             ),
           ),
           buildGridView(context, oldTestament, crossAxisCount),
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Text("New Testament",
+            child: Text(tr("New Testament"),
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black54),
             ),
           ),
@@ -65,7 +66,7 @@ class BibleSelectBook extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                book,
+                tr("ShortNames.${book}"),
                 style: TextStyle(
                   fontSize: fontSize,
                   fontWeight: selectedBook == book ? FontWeight.bold : FontWeight.normal,

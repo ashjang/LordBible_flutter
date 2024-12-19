@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -246,27 +247,27 @@ class _BibleState extends State<Bible> {
   void _showMenu(BuildContext context) {
     showCupertinoModalPopup(context: context, builder: (BuildContext context) {
       return CupertinoActionSheet(
-        title: Text("Menu"),
-        message: Text("Choose an action"),
+        title: Text(tr("Menu")),
+        message: Text(tr("Choose an action")),
         actions: [
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
             _copySelectedItems();
-            Fluttertoast.showToast(msg: "Copied");
-          }, child: Text("Copy")),
+            Fluttertoast.showToast(msg: tr("Copied"));
+          }, child: Text(tr("Copy"))),
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
             _saveFavoriteVerse();
-            Fluttertoast.showToast(msg: "Added to favorites");
-          }, child: Text("Highlight")),
+            Fluttertoast.showToast(msg: tr("Added to favorites"));
+          }, child: Text(tr("Highlight"))),
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
-            Fluttertoast.showToast(msg: "Checked this chapter");
-          }, child: Text("Read Check")),
+            Fluttertoast.showToast(msg: tr("Checked this chapter"));
+          }, child: Text(tr("Read Check"))),
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
-            Fluttertoast.showToast(msg: "Added to widget");
-          }, child: Text("Put in widget")),
+            Fluttertoast.showToast(msg: tr("Added to widget"));
+          }, child: Text(tr("Put in widget"))),
         ],
       );
     });
@@ -274,7 +275,7 @@ class _BibleState extends State<Bible> {
 
   void _copySelectedItems() {
     if (selectedIndexes.isEmpty) {
-      Fluttertoast.showToast(msg: "No items selected to copy.");
+      Fluttertoast.showToast(msg: tr("No items selected to copy"));
       return;
     }
 
@@ -285,7 +286,7 @@ class _BibleState extends State<Bible> {
     }).join("\n");
 
     // 클립보드에 복사
-    Clipboard.setData(ClipboardData(text: "${toLong[selectedBook]} ${selectedChapter}장\n${copiedText}"));
+    Clipboard.setData(ClipboardData(text: "${tr(toLong[selectedBook]!)} ${selectedChapter}장 \n${copiedText}"));
     setState(() {
       selectedIndexes.clear();
     });
@@ -309,10 +310,10 @@ class _BibleState extends State<Bible> {
         appBar: CupertinoNavigationBar(
             heroTag: 'bible_tag',
             transitionBetweenRoutes: false,
-            middle: Text("Bible", style: TextStyle(fontWeight: FontWeight.bold)),
-            leading: CupertinoButton(padding: EdgeInsets.zero, child: Text("Menu", style: TextStyle(fontSize: 18.0),), onPressed: () => _showMenu(context)),
+            middle: Text(tr("Bible"), style: TextStyle(fontWeight: FontWeight.bold)),
+            leading: CupertinoButton(padding: EdgeInsets.zero, child: Text(tr("Menu"), style: TextStyle(fontSize: 18.0),), onPressed: () => _showMenu(context)),
             trailing: CupertinoButton(padding: EdgeInsets.all(0.0),
-                child: Text("Select", style: TextStyle(fontSize: 18.0),),
+                child: Text(tr("Select"), style: TextStyle(fontSize: 18.0),),
                 onPressed: () => {
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => BibleSelect()))
                       .then((result) async {
@@ -463,7 +464,7 @@ class _BibleState extends State<Bible> {
           ),
           Text(
             selectedBook != null && selectedChapter != null
-                ? "${selectedBook} $selectedChapter"
+                ? "${tr(toLong[selectedBook]!)} $selectedChapter"
                 : "",
             style: const TextStyle(
               fontSize: 15,

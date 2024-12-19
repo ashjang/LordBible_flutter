@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class GetRandomWordState extends State<GetRandomWord> {
         child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey),)) : Column(
           children: [
             Align(alignment: Alignment.topLeft,
-            child: Text("${data!['address']} ${data!['chapter']}:${data!['verse']} (KJV흠정역)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),),
+            child: Text("${tr(data!['address'])} ${data!['chapter']}:${data!['verse']} (KJV흠정역)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),),
             Text("${data!['word']}", overflow: TextOverflow.ellipsis, maxLines: 6, style: TextStyle(fontSize: 14.0),)
           ],
     );
