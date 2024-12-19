@@ -32,7 +32,10 @@ class _BibleState extends State<Bible> {
   List<Map<String, dynamic>> verses = [];
   Set<int> selectedIndexes = {};
   bool isLoading = false;
+  int? idxOfVerse = 1;
+  int? currentTileIndex = 0;
 
+  final GlobalKey _listViewKey = GlobalKey();
   final GetChapterWord _getChapterWord = GetChapterWord();
   final ScrollController _scrollController = ScrollController();
   final FavoriteController favoriteController = Get.find<FavoriteController>();
@@ -175,19 +178,70 @@ class _BibleState extends State<Bible> {
     favoriteController.refreshFavorites();
   }
 
+  Map<String, double> getListViewPosition() {
+    final RenderBox? renderBox = _listViewKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      final position = renderBox.localToGlobal(Offset.zero); // ListView의 시작점
+      final height = renderBox.size.height; // ListView의 높이
+      return {
+        'start': position.dy,                // 시작점 y좌표
+        'end': position.dy + height,         // 끝점 y좌표
+      };
+    }
+    return {'start': 0.0, 'end': 0.0};
+  }
+
   void toggleSelect(String version) {
     if (version == versions[0]) return;
+
+    Map<String, double> ListPosition = getListViewPosition();
+
+    for (int index = 0; index < keyMap.length; index++) {
+      final key = keyMap[index];
+      if (key?.currentContext != null) {
+        final RenderBox renderBox = key!.currentContext!.findRenderObject() as RenderBox;
+        final position = renderBox.localToGlobal(Offset.zero);
+        final screenHeight = getListViewHeight();
+
+        // 화면에 표시되고 있는 타일을 확인
+        if (position.dy >= ListPosition['start']! && position.dy <= ListPosition['end']!) {
+          currentTileIndex = index;
+          break;
+        }
+      }
+    }
+
     setState(() {
       if (selectedVersions.contains(version)) {
+        currentTileIndex = ((currentTileIndex! + 1) / selectedVersions.length).toInt();
+        print(currentTileIndex);
         selectedVersions.remove(version);
+        fetchVerses().then((_) async {
+          await Future.delayed(Duration(milliseconds: 300));
+          currentTileIndex = ((currentTileIndex!)) * selectedVersions.length;
+          scrollToVerse(currentTileIndex as num);
+        });
       } else {
+        currentTileIndex = (currentTileIndex! / selectedVersions.length).toInt();
+        print(currentTileIndex);
         selectedVersions.add(version);
+        fetchVerses().then((_) async {
+          await Future.delayed(Duration(milliseconds: 300));
+          currentTileIndex = ((currentTileIndex!)) * selectedVersions.length;
+          scrollToVerse(currentTileIndex as num);
+        });
       }
-
-      fetchVerses().then((_) async {
-      });
     });
   }
+
+  double getListViewHeight() {
+    final RenderBox? renderBox = _listViewKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      return renderBox.size.height;
+    }
+    return 0.0;
+  }
+
 
   void _showMenu(BuildContext context) {
     showCupertinoModalPopup(context: context, builder: (BuildContext context) {
@@ -237,12 +291,12 @@ class _BibleState extends State<Bible> {
     });
   }
 
-  Future<void> scrollToVerse(int index) async {
+  Future<void> scrollToVerse(num index) async {
     if (keyMap.containsKey(index)) {
       final key = keyMap[index]!;
       Scrollable.ensureVisible(
         key.currentContext!,
-        duration: Duration(microseconds: 200),
+        duration: Duration(milliseconds: 300),
       );
     } else {
       Fluttertoast.showToast(msg: "Key not found for index $index");
@@ -271,7 +325,7 @@ class _BibleState extends State<Bible> {
                       });
                       await _savePreferences();
                       fetchVerses().then((_) async {
-                        await Future.delayed(Duration(milliseconds: 500));
+                        await Future.delayed(Duration(milliseconds: 200));
                         scrollToVerse((int.parse(selectedVerse) - 1) * selectedVersions.length);
                       });
                     }
@@ -389,7 +443,7 @@ class _BibleState extends State<Bible> {
           ),
           Text(
             selectedBook != null && selectedChapter != null
-                ? "${toKorLong['${selectedBook}']} $selectedChapter"
+                ? "${selectedBook} $selectedChapter"
                 : "",
             style: const TextStyle(
               fontSize: 15,
@@ -449,8 +503,9 @@ class _BibleState extends State<Bible> {
           thumbVisibility: false,
           thickness: 5.0,
           radius: Radius.circular(10.0),
-          controller: _scrollController,
+          // controller: _scrollController,
           child: ListView.separated(
+            key: _listViewKey,
             cacheExtent: 100000,
             controller: _scrollController,
             itemCount: verses.length,
