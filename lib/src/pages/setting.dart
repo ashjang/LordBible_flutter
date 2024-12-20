@@ -4,43 +4,84 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lord_bible/src/controller/scale_controller.dart';
 
-class Setting extends StatelessWidget {
+class Setting extends StatefulWidget {
   const Setting({super.key});
+
+  @override
+  State<Setting> createState() => _SettingState();
+}
+
+class _SettingState extends State<Setting> {
+  final TextScaleController textScaleController = Get.find();
 
   @override
   Widget build(BuildContext context) {
     final TextScaleController textScaleController = Get.find();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(tr('Setting')),
+      appBar: CupertinoNavigationBar(
+        heroTag: 'setting_tag',
+          transitionBetweenRoutes: false,
+        middle: Text(tr('Setting'), style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+        border: Border(bottom: BorderSide(color: Colors.transparent))
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Adjust Text Size:',
-              style: TextStyle(fontSize: 18),
-            ),
+      body: SingleChildScrollView (
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Row(),
+              _textSize(),
+
+            ],
           ),
-          Obx(() => CupertinoSlider(
-            value: textScaleController.textScale.value,
-            min: 0.5,
-            max: 1.5,
-            divisions: 15,
-            onChanged: textScaleController.updateTextScale,
-          )),
-          Obx(() => Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Current Scale: ${textScaleController.textScale.value.toStringAsFixed(2)}x',
-              style: const TextStyle(fontSize: 16),
+        )
+      )
+    );
+  }
+
+  Widget _textSize() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(tr('Adjust text size')),
+          Text("  "),
+          Expanded(
+            child: Obx(() => CupertinoSlider(
+                value: textScaleController.textScale.value, // Use reactive variable
+                min: 0.7,
+                max: 1.7,
+                divisions: 10,
+                onChanged: (value) {
+                  textScaleController.updateTextScale(value); // Ensure update method is reactive
+                },
+              ),
             ),
-          )),
+          )
+
         ],
       ),
     );
   }
 }
+
+//${textScaleController.textScale.value.toStringAsFixed(2)}x
+
+/*
+Obx(() => Text(tr('Adjust text size'), style: const TextStyle(fontSize: 16),),
+
+Obx(() => CupertinoSlider(
+                value: textScaleController.textScale.value, // Use reactive variable
+                min: 0.7,
+                max: 1.7,
+                divisions: 10,
+                onChanged: (value) {
+                  textScaleController.updateTextScale(value); // Ensure update method is reactive
+                },
+              ),
+            ),
+ */
