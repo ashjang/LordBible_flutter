@@ -32,7 +32,7 @@ class _BibleSelectState extends State<BibleSelect> {
               selectedBook = book;
               selectedChapter = null;
               selectedVerse = null;
-              address = "$book";
+              address = "${tr(toLong[selectedBook]!)}";
               _selectedSegment = 1;
             });
           },
