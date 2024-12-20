@@ -144,6 +144,10 @@ class _BibleState extends State<Bible> {
       return Map<String, String>.from(jsonDecode(jsonString));
     }).toList();
 
+    if (selectedIndexes.length == 0) {
+      return false;
+    }
+
     // 2. 선택된 말씀 추가
     for (int index in selectedIndexes) {
       final verse = verses[index];
@@ -163,10 +167,6 @@ class _BibleState extends State<Bible> {
       if (!isDuplicate) {
         existingFavorites.add(verseData);
       }
-    }
-
-    if (existingFavorites == null) {
-      return false;
     }
 
     // 3. 업데이트된 데이터를 JSON으로 다시 저장
