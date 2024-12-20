@@ -42,12 +42,34 @@ class _BibleState extends State<Bible> {
   final FavoriteController favoriteController = Get.find<FavoriteController>();
   final Map<int, GlobalKey> keyMap = {};
 
+  bool isDarkMode = false;
+
   @override
   void initState() {
     super.initState();
+    _initializeTheme();
     selectedVersions.add(versions[0]);
     _loadPreferences();
     fetchVerses();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 다크 모드 상태를 감지하고 변경 시 업데이트
+    final currentDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
+    if (currentDarkMode != isDarkMode) {
+      setState(() {
+        isDarkMode = currentDarkMode;
+        fetchVerses();
+      });
+    }
+  }
+
+  Future<void> _initializeTheme() async {
+    setState(() {
+      isDarkMode = WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
+    });
   }
 
   Future<void> _loadPreferences() async {
@@ -69,6 +91,8 @@ class _BibleState extends State<Bible> {
   }
 
   Future<void> fetchVerses() async {
+    isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
+
     if (selectedBook == null || selectedChapter == null) return;
 
     setState(() {
@@ -94,7 +118,7 @@ class _BibleState extends State<Bible> {
           'version': defaultVersion,
           'verse': defaultFetchedVerses[i]['verse'],
           'word': defaultFetchedVerses[i]['word'],
-          'color': Colors.black,
+          'color': isDarkMode ? Colors.white : Colors.black,
         });
 
         // 추가 버전의 동일한 절 데이터 추가
@@ -248,11 +272,10 @@ class _BibleState extends State<Bible> {
     return 0.0;
   }
 
-
   void _showMenu(BuildContext context) {
     showCupertinoModalPopup(context: context, builder: (BuildContext context) {
       return CupertinoActionSheet(
-        title: Text(tr("Menu")),
+        title: Text(tr("Menu"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black)),
         message: Text(tr("Choose an action")),
         actions: [
           CupertinoActionSheetAction(onPressed: () {
@@ -262,7 +285,7 @@ class _BibleState extends State<Bible> {
             } else {
               Fluttertoast.showToast(msg: tr("No items selected to copy"), backgroundColor: Colors.grey);
             }
-          }, child: Text(tr("Copy"))),
+          }, child: Text(tr("Copy"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black))),
           CupertinoActionSheetAction(onPressed: () async {
             Navigator.pop(context);
             if (await _saveFavoriteVerse()) {
@@ -270,15 +293,15 @@ class _BibleState extends State<Bible> {
             } else {
               Fluttertoast.showToast(msg: tr("No items selected to mark highlight"), backgroundColor: Colors.grey);
             }
-          }, child: Text(tr("Highlight"))),
+          }, child: Text(tr("Highlight"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black))),
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
             Fluttertoast.showToast(msg: tr("Checked this chapter"), backgroundColor: Colors.grey);
-          }, child: Text(tr("Read Check"))),
+          }, child: Text(tr("Read Check"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black))),
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
             Fluttertoast.showToast(msg: tr("Added to widget"), backgroundColor: Colors.grey);
-          }, child: Text(tr("Put in widget"))),
+          }, child: Text(tr("Put in widget"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black))),
         ],
       );
     });
@@ -318,14 +341,16 @@ class _BibleState extends State<Bible> {
 
   @override
   Widget build(BuildContext context) {
+    isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
         appBar: CupertinoNavigationBar(
             heroTag: 'bible_tag',
             transitionBetweenRoutes: false,
-            middle: Text(tr("Bible"), style: TextStyle(fontWeight: FontWeight.bold)),
-            leading: CupertinoButton(padding: EdgeInsets.zero, child: Text(tr("Menu"), style: TextStyle(fontSize: 18.0),), onPressed: () => _showMenu(context)),
+            middle: Text(tr("Bible"), style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+            leading: CupertinoButton(padding: EdgeInsets.zero, child: Text(tr("Menu"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black),), onPressed: () => _showMenu(context)),
             trailing: CupertinoButton(padding: EdgeInsets.all(0.0),
-                child: Text(tr("Select"), style: TextStyle(fontSize: 18.0),),
+                child: Text(tr("Select"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black),),
                 onPressed: () => {
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => BibleSelect()))
                       .then((result) async {
@@ -388,6 +413,7 @@ class _BibleState extends State<Bible> {
   // version button
   Widget _versionButton() {
     double fontSize = MediaQuery.of(context).size.width * 0.038;
+
     return Scrollbar(
       thumbVisibility: false,
       thickness: 4,
@@ -513,7 +539,6 @@ class _BibleState extends State<Bible> {
   }
 
   Widget _orderVersion() {
-    double fontSize = MediaQuery.of(context).size.width * 0.037;
     return Align(
         alignment: Alignment.centerRight,
         child: Padding(
@@ -532,7 +557,6 @@ class _BibleState extends State<Bible> {
           thumbVisibility: false,
           thickness: 5.0,
           radius: Radius.circular(10.0),
-          // controller: _scrollController,
           child: ListView.separated(
             key: _listViewKey,
             cacheExtent: 100000,
@@ -570,9 +594,9 @@ class _BibleState extends State<Bible> {
                   horizontal: 18, // 좌우 패딩 유지
                   vertical: 0,    // 위아래 패딩 최소화 (필요에 따라 조정)
                 ),
-                tileColor: isSelected ? Colors.grey[350] : null,
+                tileColor: isSelected ? (isDarkMode ? Colors.white24 : Colors.grey[350]) : null,
                 title: Text("${verse['verse']}  ${verse['word']}",
-                  style: TextStyle(height: 1.3, color: verse['color'] ?? Colors.black,
+                  style: TextStyle(height: 1.3, color: verse['color'],
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal),),
                 onTap: () {
                   setState(() {
@@ -592,3 +616,4 @@ class _BibleState extends State<Bible> {
     );
   }
 }
+// isDarkMode ? Colors.white : Colors.black

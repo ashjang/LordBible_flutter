@@ -21,6 +21,7 @@ class BibleSelectChapter extends StatelessWidget {
     double textScaleFactor = MediaQuery.of(context).textScaleFactor;
     int crossAxisCount = textScaleFactor > 1.3 ? 5 : 6;
     double fontSize = MediaQuery.of(context).size.width * 0.04;
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
 
     if (selectedBook == null) {
       return Center(child: Text(tr("Please choose book first")));
@@ -48,8 +49,8 @@ class BibleSelectChapter extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     color: selectedChapter == chapter
-                        ? CupertinoColors.systemFill.withOpacity(0.7)
-                        : CupertinoColors.systemGrey4,
+                        ? (isDarkMode ? Colors.white30 : CupertinoColors.systemFill.withOpacity(0.6))
+                        : (isDarkMode ? Colors.white70 : CupertinoColors.systemGrey4),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(

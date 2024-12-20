@@ -115,7 +115,7 @@ class _HomeState extends State<Home> {
                 contentPadding: EdgeInsets.symmetric(horizontal: 12),
                 title: Text(
                   "${tr("ShortNames.${toShort[word['book']!]!}")} ${word['chapter']}:${word['verse']}   ${word['word']}",
-                  style: TextStyle(color: Colors.black, fontSize: 14),
+                  style: TextStyle(fontSize: 14),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -134,12 +134,14 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
+
     return Obx(() {
       favoriteController.favoriteRefreshKey.value;
       _loadFavoriteWords();
       return Scaffold(
           appBar: CupertinoNavigationBar(
-              middle: Text(tr("Home"), style: TextStyle(fontWeight: FontWeight.bold)),
+              middle: Text(tr("Home"), style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
               backgroundColor: Colors.transparent,
               border: Border(bottom: BorderSide(color: Colors.transparent))
           ),

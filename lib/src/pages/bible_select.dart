@@ -92,13 +92,15 @@ class _BibleSelectState extends State<BibleSelect> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: CupertinoNavigationBar(
           heroTag: 'bible_select_tag',
           transitionBetweenRoutes: false,
-          middle: Text(tr("Select"), style: TextStyle(fontWeight: FontWeight.bold)),
+          middle: Text(tr("Select"), style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
           leading: CupertinoButton(padding: EdgeInsets.all(0.0),
-              child: Text(tr("Cancel"), style: TextStyle(fontSize: 18.0)),
+              child: Text(tr("Cancel"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black)),
               onPressed: () => {
                 Navigator.pop(context)
               }),
@@ -111,13 +113,13 @@ class _BibleSelectState extends State<BibleSelect> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: CupertinoSlidingSegmentedControl(
-                backgroundColor: CupertinoColors.systemGrey2,
+                backgroundColor: isDarkMode ? Colors.white30 : CupertinoColors.systemFill.withOpacity(0.6),
                 thumbColor: Colors.white54,
 
                 children: {
                   0: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(tr('Book'), style:
-                    TextStyle(fontWeight: FontWeight.bold, color: _selectedSegment == 0 ? Colors.black38 : Colors.white),),
+                    TextStyle(fontWeight: FontWeight.bold, color: _selectedSegment == 0 ? (Colors.black38) : (Colors.white)),),
                   ),
                   1: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(tr('Chapter'), style:
@@ -137,7 +139,7 @@ class _BibleSelectState extends State<BibleSelect> {
             ),
           ),
 
-          Text("${address}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),),
+          Text("${address}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white70 : Colors.black54)),
           SizedBox(height: 10,),
           Expanded(child: segmentView())
         ],

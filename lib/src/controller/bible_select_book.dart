@@ -17,6 +17,7 @@ class BibleSelectBook extends StatelessWidget {
   Widget build(BuildContext context) {
     double textScaleFactor = MediaQuery.of(context).textScaleFactor;
     int crossAxisCount = textScaleFactor > 1.3 ? 4 : 5;
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
 
     return SingleChildScrollView(
       child: Column(
@@ -25,14 +26,14 @@ class BibleSelectBook extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Text(tr("Old Testament"),
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black54),
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white70 : Colors.black54),
             ),
           ),
           buildGridView(context, oldTestament, crossAxisCount),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Text(tr("New Testament"),
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black54),
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white70 : Colors.black54),
             ),
           ),
           buildGridView(context, newTestament, crossAxisCount),
@@ -42,6 +43,8 @@ class BibleSelectBook extends StatelessWidget {
   }
 
   Widget buildGridView(BuildContext context, List<String> books, int crossAxisCount) {
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -59,8 +62,8 @@ class BibleSelectBook extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: selectedBook == book
-                  ? CupertinoColors.systemFill.withOpacity(0.7)
-                  : CupertinoColors.systemGrey4,
+                  ? (isDarkMode ? Colors.white30 : CupertinoColors.systemFill.withOpacity(0.6))
+                  : (isDarkMode ? Colors.white70 : CupertinoColors.systemGrey4),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(

@@ -41,11 +41,15 @@ class _FavoriteSelectState extends State<FavoriteSelect> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: CupertinoNavigationBar(
         heroTag: 'favorite_select_tag',
         transitionBetweenRoutes: false,
-        middle: Text("${tr(widget.word['book']!)} ${widget.word['chapter']}:${widget.word['verse']}", style: TextStyle(fontWeight: FontWeight.bold)),
+        middle: Text("${tr(widget.word['book']!)} ${widget.word['chapter']}:${widget.word['verse']}",
+            style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+        backgroundColor: Colors.transparent,
       ),
       body: isLoading ? Center(child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey),)
           : Padding(
@@ -57,7 +61,7 @@ class _FavoriteSelectState extends State<FavoriteSelect> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: List.generate(favoriteData.length, (index) {
-              final colors = [Colors.black, Colors.red, Colors.blue, Colors.green];
+              final colors = [isDarkMode ? Colors.white : Colors.black, Colors.red, Colors.blue, Colors.green];
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
