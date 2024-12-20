@@ -42,7 +42,6 @@ class BibleSelectBook extends StatelessWidget {
   }
 
   Widget buildGridView(BuildContext context, List<String> books, int crossAxisCount) {
-    double fontSize = MediaQuery.of(context).size.width * 0.04;
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -68,7 +67,7 @@ class BibleSelectBook extends StatelessWidget {
               child: Text(
                 tr("ShortNames.${book}"),
                 style: TextStyle(
-                  fontSize: fontSize,
+                  fontSize: 16,
                   fontWeight: selectedBook == book ? FontWeight.bold : FontWeight.normal,
                   color: selectedBook == book ? Colors.white : Colors.black,
                 ),

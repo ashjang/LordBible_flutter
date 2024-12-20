@@ -45,7 +45,7 @@ class _BibleSelectState extends State<BibleSelect> {
           onChapterSelected: (chapter) {
             setState(() {
               selectedChapter = chapter;
-              address = "${tr(selectedBook!)} $chapter";
+              address = "${tr(toLong[selectedBook]!)} $chapter";
               _selectedSegment = 2;
             });
           },
@@ -70,7 +70,7 @@ class _BibleSelectState extends State<BibleSelect> {
                   onVerseSelected: (verse) {
                     setState(() {
                       selectedVerse = verse;
-                      address = "${tr(selectedBook!)} $selectedChapter:$verse";
+                      address = "${tr(toLong[selectedBook]!)} $selectedChapter:$verse";
                       Navigator.pop(context, {
                         'selectedBook': selectedBook,
                         'selectedChapter': selectedChapter,
@@ -137,7 +137,7 @@ class _BibleSelectState extends State<BibleSelect> {
             ),
           ),
 
-          Text("${tr(toLong[address]!)}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),),
+          Text("${address}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),),
           SizedBox(height: 10,),
           Expanded(child: segmentView())
         ],
