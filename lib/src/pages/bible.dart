@@ -127,7 +127,7 @@ class _BibleState extends State<Bible> {
         verses = mergedVerses;
       });
     } catch (e) {
-      Fluttertoast.showToast(msg: "Loading...");
+      Fluttertoast.showToast(msg: "Loading...", backgroundColor: Colors.grey);
     } finally {
       setState(() {
         isLoading = false;
@@ -135,7 +135,7 @@ class _BibleState extends State<Bible> {
     }
   }
 
-  Future<void> _saveFavoriteVerse() async {
+  Future<bool> _saveFavoriteVerse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // 1. 기존 favoriteWords 불러오기
@@ -165,6 +165,10 @@ class _BibleState extends State<Bible> {
       }
     }
 
+    if (existingFavorites == null) {
+      return false;
+    }
+
     // 3. 업데이트된 데이터를 JSON으로 다시 저장
     List<String> updatedFavorites = existingFavorites.map((verse) {
       return jsonEncode(verse);
@@ -177,6 +181,7 @@ class _BibleState extends State<Bible> {
     });
 
     favoriteController.refreshFavorites();
+    return true;
   }
 
   Map<String, double> getListViewPosition() {
@@ -252,31 +257,36 @@ class _BibleState extends State<Bible> {
         actions: [
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
-            _copySelectedItems();
-            Fluttertoast.showToast(msg: tr("Copied"));
+            if (_copySelectedItems()) {
+              Fluttertoast.showToast(msg: tr("Copied"), backgroundColor: Colors.grey);
+            } else {
+              Fluttertoast.showToast(msg: tr("No items selected to copy"), backgroundColor: Colors.grey);
+            }
           }, child: Text(tr("Copy"))),
-          CupertinoActionSheetAction(onPressed: () {
+          CupertinoActionSheetAction(onPressed: () async {
             Navigator.pop(context);
-            _saveFavoriteVerse();
-            Fluttertoast.showToast(msg: tr("Added to favorites"));
+            if (await _saveFavoriteVerse()) {
+              Fluttertoast.showToast(msg: tr("Added to favorites"), backgroundColor: Colors.grey);
+            } else {
+              Fluttertoast.showToast(msg: tr("No items selected to mark highlight"), backgroundColor: Colors.grey);
+            }
           }, child: Text(tr("Highlight"))),
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
-            Fluttertoast.showToast(msg: tr("Checked this chapter"));
+            Fluttertoast.showToast(msg: tr("Checked this chapter"), backgroundColor: Colors.grey);
           }, child: Text(tr("Read Check"))),
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
-            Fluttertoast.showToast(msg: tr("Added to widget"));
+            Fluttertoast.showToast(msg: tr("Added to widget"), backgroundColor: Colors.grey);
           }, child: Text(tr("Put in widget"))),
         ],
       );
     });
   }
 
-  void _copySelectedItems() {
+  bool _copySelectedItems() {
     if (selectedIndexes.isEmpty) {
-      Fluttertoast.showToast(msg: tr("No items selected to copy"));
-      return;
+      return false;
     }
 
     // 선택된 항목의 텍스트 결합
@@ -290,6 +300,8 @@ class _BibleState extends State<Bible> {
     setState(() {
       selectedIndexes.clear();
     });
+
+    return true;
   }
 
   Future<void> scrollToVerse(num index) async {

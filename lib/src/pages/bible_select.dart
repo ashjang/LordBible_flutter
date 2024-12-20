@@ -137,7 +137,7 @@ class _BibleSelectState extends State<BibleSelect> {
             ),
           ),
 
-          Text("${tr(address!)}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),),
+          Text("${tr(toLong[address]!)}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),),
           SizedBox(height: 10,),
           Expanded(child: segmentView())
         ],
