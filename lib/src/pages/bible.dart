@@ -426,12 +426,12 @@ class _BibleState extends State<Bible> {
             bool isSelected = selectedVersions.contains(version);
             bool isDefault = version == versions[0];
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: GestureDetector(
                 onTap: () => toggleSelect(version),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 6, horizontal: 10),
+                      vertical: 3, horizontal: 10),
                   decoration: BoxDecoration(
                     color: isDefault
                         ? Colors.grey[500]
