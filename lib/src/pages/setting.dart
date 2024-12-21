@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lord_bible/src/controller/scale_controller.dart';
+import 'package:lord_bible/src/pages/bible.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Setting extends StatefulWidget {
@@ -14,12 +15,17 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> {
   final TextScaleController textScaleController = Get.find();
-  late bool isDarkMode;
+  bool isDarkMode = false;
+  final List<String> versions = ["KJV흠정역", "KJV", "개역개정", "NIV"];
+  int selectedIndex = 0;
+  String selectedVersion = "";
+
 
   @override
   void initState() {
     super.initState();
     _loadThemePreference();
+    _getDefaultBibleVersion();
   }
 
   Future<void> _loadThemePreference() async {
@@ -36,6 +42,53 @@ class _SettingState extends State<Setting> {
       isDarkMode = value;
     });
     Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
+  }
+
+  Future<void> _getDefaultBibleVersion() async {
+    final prefs = await SharedPreferences.getInstance();
+    final defaultVersion = prefs.getString('defaultVersion') ?? versions[0];
+    setState(() {
+      selectedVersion = defaultVersion;
+      selectedIndex = versions.indexOf(defaultVersion);
+    });
+  }
+
+  // SharedPreferences에 선택된 값 저장
+  Future<void> _saveSelectedVersion(String version) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('defaultVersion', version);
+    setState(() {
+      selectedVersion = version;
+    });
+  }
+
+  void _showPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext builder) {
+        return Container(
+          height: 300,
+          child: CupertinoPicker(
+            backgroundColor: Colors.transparent,
+            itemExtent: 50.0,
+            scrollController: FixedExtentScrollController(initialItem: selectedIndex),
+            onSelectedItemChanged: (int index) {
+              setState(() {
+                selectedIndex = index;
+                selectedVersion = versions[index];
+              });
+              _saveSelectedVersion(versions[index]);
+            },
+            children: versions.map((version) {
+              return Center(
+                child: Text(version,
+                  textAlign: TextAlign.center,),
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -55,12 +108,35 @@ class _SettingState extends State<Setting> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Row(),
+              _bibleVersion(),
               _textSize(),
               _themeMode(),
             ],
           ),
         )
       )
+    );
+  }
+
+  Widget _bibleVersion() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(tr('Bible version')),
+          ElevatedButton(
+            onPressed: () => _showPicker(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+            ),
+            child: Text(selectedVersion!, style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),),
+          ),
+        ],
+      ),
     );
   }
 

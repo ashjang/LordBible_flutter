@@ -48,9 +48,10 @@ class _BibleState extends State<Bible> {
   void initState() {
     super.initState();
     _initializeTheme();
-    selectedVersions.add(versions[0]);
-    _loadPreferences();
-    fetchVerses();
+    _loadPreferences().then((_) {
+      selectedVersions.add(defaultVersion!);
+      fetchVerses();
+    });
   }
 
   @override
@@ -63,7 +64,12 @@ class _BibleState extends State<Bible> {
         isDarkMode = currentDarkMode;
         fetchVerses();
       });
+      return;
     }
+
+    _loadPreferences().then((_) {
+      fetchVerses();
+    });
   }
 
   Future<void> _initializeTheme() async {
@@ -80,7 +86,6 @@ class _BibleState extends State<Bible> {
       selectedChapter = prefs.getString('selectedChapter') ?? "1";
       selectedVerse = prefs.getString('selectedVerse') ?? "1";
     });
-    fetchVerses();
   }
 
   Future<void> _savePreferences() async {
@@ -222,7 +227,7 @@ class _BibleState extends State<Bible> {
   }
 
   void toggleSelect(String version) {
-    if (version == versions[0]) return;
+    if (version == defaultVersion) return;
 
     Map<String, double> ListPosition = getListViewPosition();
 
@@ -424,7 +429,7 @@ class _BibleState extends State<Bible> {
         child: Row(
           children: versions.map((version) {
             bool isSelected = selectedVersions.contains(version);
-            bool isDefault = version == versions[0];
+            bool isDefault = version == defaultVersion;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
               child: GestureDetector(

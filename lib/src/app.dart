@@ -14,43 +14,53 @@ class App extends GetView<BottomNavController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() => Scaffold(
-      body: IndexedStack(
-        index: controller.pageIndex.value,
-        children: [
-          const Home(),
-          const Bible(),
-          Container(child: Center(child: Text(tr("Search"))),),
-          const Setting(),
-        ],
-      ),
+      body: _getBody(controller.pageIndex.value),
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: controller.pageIndex.value,
-        elevation: 0,
-        onTap: controller.changeBottomNav,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: tr('Home')
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.book_outlined),
-              activeIcon: Icon(Icons.book),
-              label: tr('Bible')
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.search_outlined),
-              activeIcon: Icon(Icons.search),
-              label: tr('Search')
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings_outlined),
-              activeIcon: Icon(Icons.settings),
-              label: tr('Setting')
-          )
-        ]
+          type: BottomNavigationBarType.fixed,
+          currentIndex: controller.pageIndex.value,
+          elevation: 0,
+          onTap: controller.changeBottomNav,
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home),
+                label: tr('Home')
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.book_outlined),
+                activeIcon: Icon(Icons.book),
+                label: tr('Bible')
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.search_outlined),
+                activeIcon: Icon(Icons.search),
+                label: tr('Search')
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings_outlined),
+                activeIcon: Icon(Icons.settings),
+                label: tr('Setting')
+            )
+          ]
       ),
     ));
+  }
+
+  Widget _getBody(int pageIndex) {
+    switch (pageIndex) {
+      case 0:
+        return const Home();
+      case 1:
+      // Bible 페이지에 고유 Key를 부여하여 새로 생성되도록 설정
+        return Bible(key: UniqueKey());
+      case 2:
+        return Container(
+          child: Center(child: Text(tr("Search"))),
+        );
+      case 3:
+        return const Setting();
+      default:
+        return const Home();
+    }
   }
 }
