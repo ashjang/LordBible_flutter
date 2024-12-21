@@ -499,7 +499,7 @@ class _BibleState extends State<Bible> {
                   Icons.navigate_before,
                   size: 30, // 아이콘 크기 조절
                   color: int.tryParse(selectedChapter)! != 1
-                      ? Colors.black
+                      ? (isDarkMode ? Colors.white : Colors.black)
                       : Colors.grey,
                 ),
               ),
@@ -532,7 +532,7 @@ class _BibleState extends State<Bible> {
                   Icons.navigate_next,
                   size: 30,
                   color: int.tryParse(selectedChapter)! != bibleData[selectedBook]
-                      ? Colors.black
+                      ? (isDarkMode ? Colors.white : Colors.black)
                       : Colors.grey,
                 ),
               ),
@@ -554,7 +554,7 @@ class _BibleState extends State<Bible> {
 
   Widget _verseList() {
     if (verses.isEmpty) {
-      return Center(child: Text("No verses available"));
+      return Center();
     }
 
     return Expanded(
@@ -621,4 +621,3 @@ class _BibleState extends State<Bible> {
     );
   }
 }
-// isDarkMode ? Colors.white : Colors.black
