@@ -49,6 +49,11 @@ class _FavoriteSelectState extends State<FavoriteSelect> {
         transitionBetweenRoutes: false,
         middle: Text("${tr(widget.word['book']!)} ${widget.word['chapter']}:${widget.word['verse']}",
             style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+        leading: CupertinoButton(padding: EdgeInsets.all(0.0),
+            child: Text(tr("Cancel"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black)),
+            onPressed: () => {
+              Navigator.pop(context)
+            }),
         backgroundColor: Colors.transparent,
       ),
       body: isLoading ? Center(child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey),)
