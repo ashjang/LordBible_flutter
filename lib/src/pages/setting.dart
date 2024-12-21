@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lord_bible/src/controller/scale_controller.dart';
 import 'package:lord_bible/src/pages/bible.dart';
+import 'package:lord_bible/src/pages/read_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Setting extends StatefulWidget {
@@ -107,7 +108,7 @@ class _SettingState extends State<Setting> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Row(),
+              _readCheck(),
               _bibleVersion(),
               _textSize(),
               _themeMode(),
@@ -118,22 +119,44 @@ class _SettingState extends State<Setting> {
     );
   }
 
+  Widget _readCheck() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(tr('Read Check Page'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),
+          CupertinoButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (context) => ReadCheck()),
+              );
+            },
+            padding: EdgeInsets.zero,
+            child: Icon(
+              CupertinoIcons.arrow_right,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _bibleVersion() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(tr('Bible version')),
-          ElevatedButton(
+          Text(tr('Bible version'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),
+          CupertinoButton(
             onPressed: () => _showPicker(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
+            padding: EdgeInsets.zero,
+            child: Text(selectedVersion!, style: TextStyle(fontSize: 14, color: isDarkMode ? Colors.white : Colors.black,
               ),
             ),
-            child: Text(selectedVersion!, style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),),
           ),
         ],
       ),
@@ -146,7 +169,7 @@ class _SettingState extends State<Setting> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(tr('Adjust text size')),
+          Text(tr('Adjust text size'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),
           SizedBox(
             width: MediaQuery.of(context).size.width / 2.7,
             child: CupertinoSlider(
@@ -171,7 +194,7 @@ class _SettingState extends State<Setting> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(tr('Dark mode')),
+          Text(tr('Dark mode'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),
           CupertinoSwitch(
               value: isDarkMode,
               onChanged: (bool value) {

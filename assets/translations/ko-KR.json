@@ -35,6 +35,9 @@
   "Setting": "설정",
   "Adjust text size": "글자 크기 조정",
   "Dark mode": "다크 모드",
+  "Read Check Page": "성경 통독",
+
+  "bible_read_count": "지금까지 성경을\n총 {count} 번\n읽었습니다",
 
   "ShortNames": {
     "Gen": "창",

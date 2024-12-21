@@ -35,6 +35,9 @@
   "Setting": "Setting",
   "Adjust text size": "Adjust text size",
   "Dark mode": "Dark mode",
+  "Read Check Page": "Check Readind",
+
+  "bible_read_count": "You have read the Bible\na total of {count} times so far",
 
   "ShortNames": {
     "Gen": "Gen",
