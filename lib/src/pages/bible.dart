@@ -596,9 +596,11 @@ class _BibleState extends State<Bible> {
 
     return Expanded(
         child: Scrollbar(
-          thumbVisibility: false,
+          thumbVisibility: true,
+          interactive: true,
           thickness: 5.0,
           radius: Radius.circular(10.0),
+          controller: _scrollController,
           child: ListView.separated(
             key: _listViewKey,
             cacheExtent: 100000,
