@@ -137,8 +137,12 @@ class _ReadCheckChapterState extends State<ReadCheckChapter> {
                       decoration: BoxDecoration(
                         color: isRead
                             ? (isDarkMode ? Colors.white30 : CupertinoColors.systemFill.withOpacity(0.6))
-                            : (isDarkMode ? Colors.white70 : CupertinoColors.systemGrey4),
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                            color: isDarkMode ? Colors.white30 : CupertinoColors.systemFill.withOpacity(0.6),
+                            width: 1.5
+                        ),
                       ),
                       child: Center(
                         child: Text(
@@ -146,7 +150,7 @@ class _ReadCheckChapterState extends State<ReadCheckChapter> {
                           style: TextStyle(
                             fontSize: fontSize,
                             fontWeight: isRead ? FontWeight.bold : FontWeight.normal,
-                            color: isRead ? Colors.white : Colors.black,
+                            color: isRead ? Colors.white : (isDarkMode ? Colors.white : Colors.black),
                           ),
                         ),
                       ),

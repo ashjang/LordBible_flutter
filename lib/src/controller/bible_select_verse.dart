@@ -52,8 +52,12 @@ class BibleSelectVerse extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: selectedVerse == verse
                         ? (isDarkMode ? Colors.white30 : CupertinoColors.systemFill.withOpacity(0.6))
-                        : (isDarkMode ? Colors.white70 : CupertinoColors.systemGrey4),
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                        color: isDarkMode ? Colors.white30 : CupertinoColors.systemFill.withOpacity(0.6),
+                        width: 1.5
+                    ),
                   ),
                   child: Center(
                     child: Text(
@@ -61,7 +65,7 @@ class BibleSelectVerse extends StatelessWidget {
                       style: TextStyle(
                         fontSize: fontSize,
                         fontWeight: selectedVerse == verse ? FontWeight.bold : FontWeight.normal,
-                        color: selectedVerse == verse ? Colors.white : Colors.black,
+                        color: selectedVerse == verse ? Colors.white : (isDarkMode ? Colors.white : Colors.black),
                       ),
                     ),
                   ),

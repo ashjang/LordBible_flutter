@@ -134,10 +134,16 @@ class _SettingState extends State<Setting> {
               );
             },
             padding: EdgeInsets.zero,
-            child: Icon(
-              CupertinoIcons.arrow_right,
-              color: isDarkMode ? Colors.white : Colors.black,
-            ),
+            child: Row(
+              children: [
+                Text('${tr('Move')}', style: TextStyle(fontSize: 15.0, color: Colors.grey)),
+                Icon(
+                  CupertinoIcons.forward,
+                  color: Colors.grey,
+                  size: 20
+                ),
+              ],
+            )
           ),
         ],
       ),

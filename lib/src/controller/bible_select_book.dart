@@ -63,8 +63,12 @@ class BibleSelectBook extends StatelessWidget {
             decoration: BoxDecoration(
               color: selectedBook == book
                   ? (isDarkMode ? Colors.white30 : CupertinoColors.systemFill.withOpacity(0.6))
-                  : (isDarkMode ? Colors.white70 : CupertinoColors.systemGrey4),
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isDarkMode ? Colors.white30 : CupertinoColors.systemFill.withOpacity(0.6),
+                width: 1.5
+              ),
             ),
             child: Center(
               child: Text(
@@ -72,7 +76,7 @@ class BibleSelectBook extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: selectedBook == book ? FontWeight.bold : FontWeight.normal,
-                  color: selectedBook == book ? Colors.white : Colors.black,
+                  color: selectedBook == book ? Colors.white : (isDarkMode ? Colors.white : Colors.black),
                 ),
               ),
             ),
