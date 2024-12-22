@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lord_bible/src/controller/bible_select_book.dart';
+import 'package:lord_bible/src/controller/read_check_chapter.dart';
 import 'package:lord_bible/src/data/bible_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,12 +19,13 @@ class _ReadCheckState extends State<ReadCheck> {
   String? selectedBook;
   String? selectedChapter;
   String? address = tr("Please choose book first");
-  List<Map<String, String>> readList = [];
 
   @override
   void initState() {
     super.initState();
-
+    setState(() {
+      _getReadCount();
+    });
   }
 
   Widget segmentView() {
@@ -40,33 +42,35 @@ class _ReadCheckState extends State<ReadCheck> {
           },
         );
       case 1:
+        return ReadCheckChapter(
+          selectedBook: selectedBook,
+          chapterCount: selectedBook != null ? bibleData[selectedBook]! : 0,
+          selectedChapter: selectedChapter,
+          onChapterSelected: (chapter) {
+            setState(() {
+              selectedChapter = chapter;
+              _selectedSegment = 1;
+            });
+          }
+        );
 
       default:
         return Center(child: Text('Unknown'),);
     }
   }
 
-  Future<void> _saveRead() async {
+  Future<void> _getReadCount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('readList', readList.map((e) => '${e['address']}:${e['chapter']}').toList());
-  }
-
-  void updateReadList(String chapter) {
+    int storedCount = prefs.getInt('readCount') ?? 0;
     setState(() {
-      final existingIdx = readList.indexWhere((e) =>
-        e['address'] == selectedBook && e['chapter'] == chapter);
-      if (existingIdx >= 0) {
-        readList.removeAt(existingIdx);
-      } else {
-        readList.add({"address": selectedBook!, "chapter": chapter!});
-      }
-      _saveRead();
+      count = storedCount;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
+    _getReadCount();
 
     return Scaffold(
       appBar: CupertinoNavigationBar(
@@ -84,12 +88,27 @@ class _ReadCheckState extends State<ReadCheck> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 20),
+          SizedBox(height: 15),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.1),
             child: Align(
               alignment: Alignment.centerRight,
-              child: Text('bible_read_count'.tr(args: [count.toString()]), textAlign: TextAlign.right,),
+              child: Text.rich(
+                TextSpan(
+                  text: '${tr('bible_read_count1')} ',
+                  children: [
+                    TextSpan(
+                      text: '$count', // bold 처리할 부분
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text: ' ${tr('bible_read_count2')}',
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.right,
+              ),
+
             )
           ),
           Padding(
@@ -112,6 +131,7 @@ class _ReadCheckState extends State<ReadCheck> {
                 onValueChanged: (int? value) {
                   setState(() {
                     _selectedSegment = value!;
+                    _getReadCount();
                   });
                 }
             ),

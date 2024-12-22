@@ -95,6 +95,39 @@ class _BibleState extends State<Bible> {
     await prefs.setString('selectedChapter', selectedChapter!);
   }
 
+  Future<bool> _getAndSaveRead() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // 기존데이터 불러오기
+    List<String>? tmp = prefs.getStringList('readList');
+    List<Map<String, String>> readList = [];
+    if (tmp != null) {
+      setState(() {
+        readList = tmp.map((item) {
+          List<String> parts = item.split(':');
+          return {'address': parts[0], 'chapter': parts[1]};
+        }).toList();
+      });
+    }
+
+    bool isRead = readList.any(
+          (e) => e['address'] == selectedBook && e['chapter'] == selectedChapter,
+    );
+
+    // 읽었다면 false, 아니면 data 수정
+    if (isRead) {
+      return false;
+    } else {
+      setState(() {
+        print(readList.length + 1);
+        prefs.setInt('readChapterCount', readList.length + 1);
+        readList.add({'address': selectedBook!, 'chapter': selectedChapter});
+        prefs.setStringList('readList', readList.map((e) => '${e['address']}:${e['chapter']}').toList());
+      });
+      return true;
+    }
+  }
+
   Future<void> fetchVerses() async {
     isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
 
@@ -299,9 +332,13 @@ class _BibleState extends State<Bible> {
               Fluttertoast.showToast(msg: tr("No items selected to mark highlight"), backgroundColor: Colors.grey);
             }
           }, child: Text(tr("Highlight"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black))),
-          CupertinoActionSheetAction(onPressed: () {
+          CupertinoActionSheetAction(onPressed: () async {
             Navigator.pop(context);
-            Fluttertoast.showToast(msg: tr("Checked this chapter"), backgroundColor: Colors.grey);
+            if (await _getAndSaveRead()) {
+              Fluttertoast.showToast(msg: tr("Checked this chapter"), backgroundColor: Colors.grey);
+            } else {
+              Fluttertoast.showToast(msg: tr("Already checked"), backgroundColor: Colors.grey);
+            }
           }, child: Text(tr("Read Check"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black))),
           CupertinoActionSheetAction(onPressed: () {
             Navigator.pop(context);
