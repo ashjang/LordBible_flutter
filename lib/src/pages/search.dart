@@ -1,8 +1,10 @@
+import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lord_bible/src/data/bible_data.dart';
 import 'package:lord_bible/src/data/getSearchWord.dart';
+import 'package:lord_bible/src/pages/favorite_select.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -20,11 +22,19 @@ class _SearchState extends State<Search> {
   bool isLoading = false;
   String selectedVersion = "KJV흠정역";
   JsonSearch jsonSearch = JsonSearch();
+  List<GlobalKey> _itemKeys = [];
 
   @override
   void initState() {
     super.initState();
     textController = TextEditingController();
+    _scrollController.addListener(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          getFirstVisibleIndex();
+        });
+      });
+    });
   }
 
   @override
@@ -33,7 +43,25 @@ class _SearchState extends State<Search> {
     super.dispose();
   }
 
-  void _onSearch(String value) async {
+  int getFirstVisibleIndex() {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    for (int i = 0; i < _itemKeys.length; i++) {
+      final key = _itemKeys[i];
+      if (key.currentContext != null) {
+        final RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
+        final Offset position = box.localToGlobal(Offset.zero);
+
+        // 항목이 가시 영역 내에 있는지 확인
+        if (position.dy >= 0 && position.dy < screenHeight) {
+          return i; // 첫 번째 가시 항목의 인덱스
+        }
+      }
+    }
+    return -1; // 가시 영역 내 항목이 없음
+  }
+
+
+  Future<void> _onSearch(String value) async {
     setState(() {
       isLoading = true;
     });
@@ -42,13 +70,16 @@ class _SearchState extends State<Search> {
 
     setState(() {
       results = foundVerses;
+      _itemKeys = List.generate(results.length, (_) => GlobalKey());
       isLoading = false;
     });
   }
 
   void toggleSelect(String version) {
     setState(() {
+      results.clear();
       selectedVersion = version;
+      _scrollController.animateTo(0.0, duration: Duration(microseconds: 100), curve: Curves.ease);
     });
   }
 
@@ -83,76 +114,80 @@ class _SearchState extends State<Search> {
     final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: CupertinoNavigationBar(
-          heroTag: 'search_tag',
-          transitionBetweenRoutes: false,
-          middle: Text(tr('Search'), style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
-          backgroundColor: Colors.transparent,
-          border: Border(bottom: BorderSide(color: Colors.transparent))
-      ),
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                _versionButton(),
+        appBar: CupertinoNavigationBar(
+            heroTag: 'search_tag',
+            transitionBetweenRoutes: false,
+            middle: Text(tr('Search'), style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black)),
+            backgroundColor: Colors.transparent,
+            border: Border(bottom: BorderSide(color: Colors.transparent))
+        ),
+        body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  _versionButton(),
 
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
-                    child: Row(
-                      children: [
-                        // 검색란
-                        Expanded(
-                          child: CupertinoSearchTextField(
-                            controller: textController,
-                            placeholder: '${tr('Type to search')}',
-                            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-                            onChanged: (value) {
-                              setState(() {
-                                query = value;
+                  Padding(
+                      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
+                      child: Row(
+                        children: [
+                          // 검색란
+                          Expanded(
+                            child: CupertinoSearchTextField(
+                              controller: textController,
+                              placeholder: '${tr('Type to search')}',
+                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+                              onChanged: (value) {
+                                setState(() {
+                                  query = value;
+                                });
+                              },
+                              onSubmitted: (value) {
+                                _onSearch(value);
+                              },
+                            ),
+                          ),
+
+                          CupertinoButton(
+                            child: Text("확인", style: TextStyle(fontSize: 15.0, color: isDarkMode ? Colors.white : Colors.black)),
+                            onPressed: () {
+                              FocusScope.of(context).unfocus();
+                              _onSearch(query).then((_) async {
+                                await _scrollController.animateTo(0.0,
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
                               });
                             },
-                            onSubmitted: (value) {
-                              _onSearch(value);
-                            },
-                          ),
+                          )
+                        ],
+                      )
+                  ),
+                  listView(),
+                ],
+              ),
+
+              if (isLoading)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    ignoring: false, // 터치 이벤트 전달 허용
+                    child: Container(
+                      color: Colors.black45.withOpacity(0.5), // 반투명 배경
+                      child: Center(
+                        child: CupertinoActivityIndicator(
+                          radius: 20.0,
+                          color: Colors.white,
                         ),
-
-                        CupertinoButton(
-                          child: Text("확인", style: TextStyle(fontSize: 15.0, color: isDarkMode ? Colors.white : Colors.black)),
-                          onPressed: () {
-                            FocusScope.of(context).unfocus();
-                            _onSearch(query);
-                          },
-                        )
-                      ],
-                    )
-                ),
-
-                listView(),
-              ],
-            ),
-
-            if (isLoading)
-              Positioned.fill(
-                child: IgnorePointer(
-                  ignoring: false, // 터치 이벤트 전달 허용
-                  child: Container(
-                    color: Colors.black45.withOpacity(0.5), // 반투명 배경
-                    child: Center(
-                      child: CupertinoActivityIndicator(
-                        radius: 20.0,
-                        color: Colors.white,
                       ),
                     ),
                   ),
                 ),
-              ),
-          ],
-        ),
-      )
+            ],
+          ),
+        )
     );
   }
 
@@ -213,24 +248,39 @@ class _SearchState extends State<Search> {
     final textScaleFactor = MediaQuery.textScaleFactorOf(context);
 
     return Expanded(
-        child: Scrollbar(
-          thumbVisibility: true,
-          interactive: true,
-          thickness: 5.0,
-          radius: Radius.circular(10.0),
+        child: DraggableScrollbar.rrect (
+          labelTextBuilder: (offsetY) {
+            if (_scrollController.hasClients) {
+              final int index = getFirstVisibleIndex();
+
+              // 인덱스가 유효한 범위인지 확인
+              if (index >= 0 && index < results.length) {
+                final result = results[index];
+                return Text(
+                  "${tr("ShortNames.${toShort[result['book']]!}")}",
+                  style: TextStyle(color: Colors.white),
+                );
+              }
+            }
+            return Text("", style: TextStyle(color: Colors.black));
+          },
+          backgroundColor: isDarkMode ? Colors.grey : Colors.grey[500]!,
+          labelConstraints: BoxConstraints.tightFor(width: 60, height: 40),
           controller: _scrollController,
           child: ListView.separated(
+            cacheExtent: 10,
             controller: _scrollController,
             itemCount: results.length,
             separatorBuilder: (context, index) => Divider(
-                color: Colors.grey[700],
-                thickness: 0.8,
-                height: 1.0,
-              ),
+              color: Colors.grey[700],
+              thickness: 0.8,
+              height: 1.0,
+            ),
             itemBuilder: (context, index) {
-              final result = results[index];
+              final Map<String, dynamic> result = results[index];
 
               return ListTile(
+                key: _itemKeys[index],
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 18,
                   vertical: 0,
@@ -246,7 +296,10 @@ class _SearchState extends State<Search> {
                     ),
                   ),
                 ),
-                onTap: () { },
+                onTap: () {
+                  final Map<String, String> word = result.map((key, value) => MapEntry(key, value.toString()));
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => FavoriteSelect(word: word)));
+                },
               );
             },
           ),
@@ -254,3 +307,4 @@ class _SearchState extends State<Search> {
     );
   }
 }
+
