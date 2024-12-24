@@ -23,7 +23,8 @@ class Bible extends StatefulWidget {
 
 final List<Color> additionalColors = [Colors.red, Colors.blue, Colors.green];
 
-class _BibleState extends State<Bible> {
+class _BibleState extends State<Bible> with WidgetsBindingObserver {
+  AppLifecycleState? _lastLifecycleState;
   final List<String> versions = ["KJV흠정역", "KJV", "개역개정", "NIV"];
   List<String> selectedVersions = [];
   String? defaultVersion = "KJV흠정역";
@@ -48,8 +49,32 @@ class _BibleState extends State<Bible> {
   void initState() {
     super.initState();
     _initializeTheme();
+    WidgetsBinding.instance.addObserver(this);
     _loadPreferences().then((_) {
       selectedVersions.add(defaultVersion!);
+      fetchVerses();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    setState(() {
+      _lastLifecycleState = state;
+    });
+
+    if (state == AppLifecycleState.resumed) {
+      _reloadData();
+    }
+  }
+
+  void _reloadData() {
+    _loadPreferences().then((_) {
       fetchVerses();
     });
   }
@@ -521,6 +546,7 @@ class _BibleState extends State<Bible> {
           GestureDetector(
             onTap: (int.tryParse(selectedChapter)! != 1)
                 ? () {
+              _savePreferences();
               setState(() {
                 selectedIndexes.clear();
                 selectedChapter =
@@ -554,6 +580,7 @@ class _BibleState extends State<Bible> {
           GestureDetector(
             onTap: (int.tryParse(selectedChapter)! != bibleData[selectedBook])
                 ? () {
+              _savePreferences();
               setState(() {
                 selectedIndexes.clear();
                 selectedChapter =
