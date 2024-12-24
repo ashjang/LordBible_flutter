@@ -144,7 +144,6 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
       return false;
     } else {
       setState(() {
-        print(readList.length + 1);
         prefs.setInt('readChapterCount', readList.length + 1);
         readList.add({'address': selectedBook!, 'chapter': selectedChapter});
         prefs.setStringList('readList', readList.map((e) => '${e['address']}:${e['chapter']}').toList());
@@ -307,7 +306,6 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
     setState(() {
       if (selectedVersions.contains(version)) {
         currentTileIndex = ((currentTileIndex! + 1) / selectedVersions.length).toInt();
-        print(currentTileIndex);
         selectedVersions.remove(version);
         fetchVerses().then((_) async {
           await Future.delayed(Duration(milliseconds: 300));
@@ -316,7 +314,6 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
         });
       } else {
         currentTileIndex = (currentTileIndex! / selectedVersions.length).toInt();
-        print(currentTileIndex);
         selectedVersions.add(version);
         fetchVerses().then((_) async {
           await Future.delayed(Duration(milliseconds: 300));
