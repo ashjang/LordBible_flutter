@@ -549,6 +549,7 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
                 selectedChapter =
                     (int.tryParse(selectedChapter)! - 1).toString();
                 fetchVerses();
+                scrollToVerse(0);
               });
             } : null,
             child: SizedBox(
@@ -583,6 +584,7 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
                 selectedChapter =
                     (int.tryParse(selectedChapter)! + 1).toString();
                 fetchVerses();
+                scrollToVerse(0);
               });
             } : null,
             child: SizedBox(
