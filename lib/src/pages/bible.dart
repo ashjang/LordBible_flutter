@@ -370,14 +370,10 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
           }, child: Text(tr("Read Check"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black))),
           CupertinoActionSheetAction(onPressed: () async {
             Navigator.pop(context);
-            if (Platform.isIOS) {
-              if (await updateWidget()) {
-                Fluttertoast.showToast(msg: tr("Added to widget"), backgroundColor: Colors.grey);
-              } else {
-                Fluttertoast.showToast(msg: tr("Please check one verse"), backgroundColor: Colors.grey);
-              }
-            } else if (Platform.isAndroid) {
-
+            if (await updateWidget()) {
+              Fluttertoast.showToast(msg: tr("Added to widget"), backgroundColor: Colors.grey);
+            } else {
+              Fluttertoast.showToast(msg: tr("Please check one verse"), backgroundColor: Colors.grey);
             }
           }, child: Text(tr("Put in widget"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black))),
         ],
@@ -434,10 +430,19 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
     setState(() {
       selectedIndexes.clear();
     });
-    print(description);
+
     HomeWidget.saveWidgetData<String>('title', title);
     HomeWidget.saveWidgetData<String>('description', description);
-    HomeWidget.updateWidget(iOSName: iOSWidgetName);
+    if (Platform.isIOS) {
+      HomeWidget.updateWidget(
+        iOSName: iOSWidgetName,
+      );
+    } else if (Platform.isAndroid) {
+      HomeWidget.updateWidget(
+        qualifiedAndroidName: "com.ashjang.lordbible.lord_bible.BibleWidget",
+        androidName: 'BibleWidget',
+      );
+    }
 
     return true;
   }
