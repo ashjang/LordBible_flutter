@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:lord_bible/src/data/bible_data.dart';
 import 'package:lord_bible/src/data/getChapterWord.dart';
 import 'package:lord_bible/src/pages/bible_select.dart';
@@ -45,6 +47,9 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
 
   bool isDarkMode = false;
 
+  String appGroupId = "group.com.Harim.Lordwords";
+  String iOSWidgetName = "BibleWidget";
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +59,7 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
       selectedVersions.add(defaultVersion!);
       fetchVerses();
     });
+    HomeWidget.setAppGroupId(appGroupId);
   }
 
   @override
@@ -362,9 +368,17 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
               Fluttertoast.showToast(msg: tr("Already checked"), backgroundColor: Colors.grey);
             }
           }, child: Text(tr("Read Check"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black))),
-          CupertinoActionSheetAction(onPressed: () {
+          CupertinoActionSheetAction(onPressed: () async {
             Navigator.pop(context);
-            Fluttertoast.showToast(msg: tr("Added to widget"), backgroundColor: Colors.grey);
+            if (Platform.isIOS) {
+              if (await updateWidget()) {
+                Fluttertoast.showToast(msg: tr("Added to widget"), backgroundColor: Colors.grey);
+              } else {
+                Fluttertoast.showToast(msg: tr("Please check one verse"), backgroundColor: Colors.grey);
+              }
+            } else if (Platform.isAndroid) {
+
+            }
           }, child: Text(tr("Put in widget"), style: TextStyle(fontSize: 16.0, color: isDarkMode ? Colors.white : Colors.black))),
         ],
       );
@@ -401,6 +415,31 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
     } else {
       Fluttertoast.showToast(msg: "Key not found for index $index");
     }
+  }
+
+  Future<bool> updateWidget() async{
+    if (selectedIndexes.length != 1) {
+      return false;
+    }
+
+    String title = "";
+    String description = "";
+
+    for (int index in selectedIndexes) {
+      final verse = verses[index];
+      title = "${tr(toLong[selectedBook]!)} ${selectedChapter}:${verse['verse']}";
+      description = "${verse['word']}";
+    }
+
+    setState(() {
+      selectedIndexes.clear();
+    });
+    print(description);
+    HomeWidget.saveWidgetData<String>('title', title);
+    HomeWidget.saveWidgetData<String>('description', description);
+    HomeWidget.updateWidget(iOSName: iOSWidgetName);
+
+    return true;
   }
 
   @override
