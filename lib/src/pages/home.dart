@@ -182,7 +182,7 @@ class _HomeState extends State<Home> {
           body: Column(
             children: [
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.1),
+                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.07),
                   child: Column(
                     children: [
                       SizedBox(height: 20),
@@ -193,7 +193,7 @@ class _HomeState extends State<Home> {
                   )
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.1),
+                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.07),
                 child: Row(
                   children: [
                     Icon(CupertinoIcons.star_fill, color: Colors.yellow,),
