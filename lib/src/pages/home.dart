@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,8 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:lord_bible/src/controller/favorite_controller.dart';
 import 'package:lord_bible/src/data/bible_data.dart';
 import 'package:lord_bible/src/data/getRandomWord.dart';
+import 'package:lord_bible/src/data/notification_service.dart';
+import 'package:lord_bible/src/data/workmanager_service.dart';
 import 'package:lord_bible/src/pages/favorite_select.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,12 +25,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  AppLifecycleState? _lastLifecycleState;
   List<Map<String, String>> favoriteWords = [];
   final FavoriteController favoriteController = Get.find<FavoriteController>();
 
   @override
   void initState() {
     super.initState();
+    _checkFirstRun();
     _loadFavoriteWords();
   }
 
@@ -34,6 +40,33 @@ class _HomeState extends State<Home> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _loadFavoriteWords();
+  }
+
+  // @override
+  // Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+  //   setState(() {
+  //     _lastLifecycleState = state;
+  //   });
+  //
+  //   if (state == AppLifecycleState.resumed) {
+  //     if (Platform.isIOS) {
+  //       await NotificationService.scheduleDayNotifications(DateTime.now().copyWith(hour: 8, minute: 30));
+  //       await NotificationService.scheduleNightNotifications(DateTime.now().copyWith(hour: 22, minute: 0));
+  //     }
+  //   }
+  // }
+
+  void _checkFirstRun() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+
+    if (isFirstRun) {
+      log("isFirstRun true");
+      prefs.setBool('isFirstRun', false);
+      if (Platform.isAndroid) {
+        await WorkManagerService().register();
+      }
+    }
   }
 
   Future<void> _loadFavoriteWords() async {
