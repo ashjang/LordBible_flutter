@@ -55,31 +55,68 @@
 
 ## 최종 구현 화면
 
+### iOS
 #### - 홈화면
 <div>
-  <img src="doc/img/home.PNG" width="300" height="600">
-  <img src="doc/img/star.PNG" width="300" height="600">
+  <img src="doc/img/ios/home.PNG" width="300" height="600">
+  <img src="doc/img/ios/star.PNG" width="300" height="600">
 </div>
 
 #### - 성경말씀
 <div>
-  <img src="doc/img/bible.PNG" width="300" height="600">
-  <img src="doc/img/bible_menu.PNG" width="300" height="600">
-  <img src="doc/img/bible_select.PNG" width="300" height="600">
+  <img src="doc/img/ios/bible.PNG" width="300" height="600">
+  <img src="doc/img/ios/bible_menu.PNG" width="300" height="600">
+  <img src="doc/img/ios/bible_select.PNG" width="300" height="600">
 </div>
 
 #### - 검색
 <div>
-  <img src="doc/img/search.PNG" width="300" height="600">
+  <img src="doc/img/ios/search.PNG" width="300" height="600">
 </div>
 
 #### - 더보기
 <div>
-  <img src="doc/img/setting.PNG" width="300" height="600">
-  <img src="doc/img/read_check.PNG" width="300" height="600">
+  <img src="doc/img/ios/setting.PNG" width="300" height="600">
+  <img src="doc/img/ios/read_check.PNG" width="300" height="600">
 </div>
 
 #### - 위젯
 <div>
-  <img src="doc/img/widget.jpg" width="300" height="600">
+  <img src="doc/img/ios/widget.jpg" width="300" height="600">
+</div>
+
+
+### Android
+#### - 초기화면
+<div>
+  <img src="doc/img/android/initial.png" width="300" height="600">
+</div>
+
+#### - 홈화면
+<div>
+  <img src="doc/img/android/home.png" width="300" height="600">
+  <img src="doc/img/android/star.png" width="300" height="600">
+</div>
+
+#### - 성경말씀
+<div>
+  <img src="doc/img/android/bible.png" width="300" height="600">
+  <img src="doc/img/android/bible_menu.png" width="300" height="600">
+  <img src="doc/img/android/bible_select.png" width="300" height="600">
+</div>
+
+#### - 검색
+<div>
+  <img src="doc/img/android/search.png" width="300" height="600">
+</div>
+
+#### - 더보기
+<div>
+  <img src="doc/img/android/setting.png" width="300" height="600">
+  <img src="doc/img/android/read_check.png" width="300" height="600">
+</div>
+
+#### - 위젯
+<div>
+  <img src="doc/img/android/widget.png" width="300" height="600">
 </div>
