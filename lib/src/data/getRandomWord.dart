@@ -71,8 +71,11 @@ class GetRandomWordState extends State<GetRandomWord> {
                 ),
               ],
             ),
-            Text("${data!['word']}", overflow: TextOverflow.ellipsis, maxLines: 10, style: TextStyle(fontSize: 14.0),)
-          ],
+          Align(alignment: Alignment.centerLeft,
+            child: Text("${data!['word']}", overflow: TextOverflow.ellipsis, maxLines: 10, style: TextStyle(fontSize: 14.0),)
+          ,)
+
+        ],
     );
   }
 }

@@ -8,7 +8,7 @@ class WorkManagerService {
   Future<void> init() async {
     await Workmanager().initialize(
       callbackDispatcher,
-      isInDebugMode: true,
+      isInDebugMode: false,
     );
   }
 

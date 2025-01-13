@@ -79,7 +79,7 @@ class NotificationService {
 
   static Future<bool> scheduleDayNotifications(DateTime now) async {
     if (!await _checkPermission() || DateTime.now().isAfter(DateTime.now().copyWith(hour: 8, minute: 30))) {
-      flutterLocalNotificationsPlugin.cancel(1);
+      // flutterLocalNotificationsPlugin.cancel(1);
       log("check permission or wrong time");
       return false;
     }
@@ -89,7 +89,7 @@ class NotificationService {
 
   static Future<bool> scheduleNightNotifications(DateTime now) async {
     if (!await _checkPermission() || DateTime.now().isAfter(DateTime.now().copyWith(hour: 22, minute: 0))) {
-      flutterLocalNotificationsPlugin.cancel(2);
+      // flutterLocalNotificationsPlugin.cancel(2);
       log("check permission or wrong time");
       return false;
     }
