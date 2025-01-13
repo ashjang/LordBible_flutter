@@ -89,34 +89,34 @@
 ### Android
 #### - 초기화면
 <div>
-  <img src="doc/img/android/initial.png" width="300" height="700">
+  <img src="doc/img/android/initial.png" width="300" height="850">
 </div>
 
 #### - 홈화면
 <div>
-  <img src="doc/img/android/home.png" width="300" height="700">
-  <img src="doc/img/android/star.png" width="300" height="700">
+  <img src="doc/img/android/home.png" width="300" height="850">
+  <img src="doc/img/android/star.png" width="300" height="850">
 </div>
 
 #### - 성경말씀
 <div>
-  <img src="doc/img/android/bible.png" width="300" height="700">
-  <img src="doc/img/android/bible_menu.png" width="300" height="700">
-  <img src="doc/img/android/bible_select.png" width="300" height="700">
+  <img src="doc/img/android/bible.png" width="300" height="850">
+  <img src="doc/img/android/bible_menu.png" width="300" height="850">
+  <img src="doc/img/android/bible_select.png" width="300" height="850">
 </div>
 
 #### - 검색
 <div>
-  <img src="doc/img/android/search.png" width="300" height="700">
+  <img src="doc/img/android/search.png" width="300" height="850">
 </div>
 
 #### - 더보기
 <div>
-  <img src="doc/img/android/setting.png" width="300" height="700">
-  <img src="doc/img/android/read_check.png" width="300" height="700">
+  <img src="doc/img/android/setting.png" width="300" height="850">
+  <img src="doc/img/android/read_check.png" width="300" height="850">
 </div>
 
 #### - 위젯
 <div>
-  <img src="doc/img/android/widget.png" width="300" height="700">
+  <img src="doc/img/android/widget.png" width="300" height="850">
 </div>
