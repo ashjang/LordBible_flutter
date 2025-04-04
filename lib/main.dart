@@ -72,6 +72,7 @@ class MyApp extends StatelessWidget {
     ]);
 
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       supportedLocales: context.supportedLocales,
       localizationsDelegates: context.localizationDelegates,
       initialBinding: InitBinding(),

@@ -127,6 +127,7 @@ class _SearchState extends State<Search> {
           child: Stack(
             children: [
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _versionButton(),
 
@@ -225,7 +226,7 @@ class _SearchState extends State<Search> {
                   child: Text(
                     version,
                     style: TextStyle(
-                      fontSize: fontSize,
+                      // fontSize: fontSize,
                       color: isSelected
                           ? Colors.white
                           : Colors.grey[500],

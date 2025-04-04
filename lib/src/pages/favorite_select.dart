@@ -20,6 +20,7 @@ class FavoriteSelect extends StatefulWidget {
 
 class _FavoriteSelectState extends State<FavoriteSelect> {
   final GetFavoriteWord _getFavoriteWord = GetFavoriteWord();
+  // final GetFavoriteWord2 _getFavoriteWord = GetFavoriteWord2();
   bool isLoading = false;
   List<Map<String, String>> favoriteData = [];
 

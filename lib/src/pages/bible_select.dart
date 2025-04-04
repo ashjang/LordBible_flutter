@@ -54,6 +54,7 @@ class _BibleSelectState extends State<BibleSelect> {
         if (selectedBook != null && selectedChapter != null) {
           return FutureBuilder<int>(
             future: GetChapterWord().getNumOfVerse(toLong['${selectedBook}']!, selectedChapter!),
+            // future: GetChapterWord2().getNumOfVerse(toLong['${selectedBook}']!, selectedChapter!),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CupertinoActivityIndicator(radius: 20.0, color: Colors.grey));

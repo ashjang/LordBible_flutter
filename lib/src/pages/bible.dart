@@ -41,6 +41,7 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
 
   final GlobalKey _listViewKey = GlobalKey();
   final GetChapterWord _getChapterWord = GetChapterWord();
+  // final GetChapterWord2 _getChapterWord = GetChapterWord2();
   final ScrollController _scrollController = ScrollController();
   final FavoriteController favoriteController = Get.find<FavoriteController>();
   final Map<int, GlobalKey> keyMap = {};
@@ -555,7 +556,6 @@ class _BibleState extends State<Bible> with WidgetsBindingObserver {
                   child: Text(
                     version,
                     style: TextStyle(
-                      fontSize: fontSize,
                       color: isDefault
                           ? Colors.black
                           : isSelected
